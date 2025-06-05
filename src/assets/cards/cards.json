@@ -1,0 +1,407 @@
+{
+  "cards": [
+    {
+      "type": "fort",
+      "name": "Starting Fort",
+      "grid": [
+        [1, 0, "W"],
+        [1, 1, "G"],
+        [1, 2, "G"],
+        [1, 3, "B"]
+      ],
+      "slots": 4,
+      "description": "Add [B,W] to your supply. Draw three cards then give one to your opponent.",
+      "id": 0
+    },
+    {
+      "type": "fort",
+      "name": "Barricaded Fortress",
+      "grid": [
+        [1, 1, "B"],
+        [1, 2, "."],
+        [3, 0, "."],
+        [3, 3, "."]
+      ],
+      "slots": 3,
+      "description": "Whenever an opponent attacks this fort and is done rolling, you may reroll 1 of the dice.",
+      "id": 1
+    },
+    {
+      "type": "fort",
+      "name": "Braced Stronghold",
+      "grid": [
+        [1, 0, "G"],
+        [1, 2, "."],
+        [2, 0, "."],
+        [2, 2, "."]
+      ],
+      "slots": 4,
+      "description": "Whenever an opponent attacks this fort, he cannot reroll [L] results.",
+      "id": 2
+    },
+    {
+      "type": "fort",
+      "name": "Cove Outpost",
+      "grid": [
+        [0, 0, "."],
+        [0, 1, "."],
+        [1, 0, "W"],
+        [2, 0, "."]
+      ],
+      "slots": 4,
+      "description": "Whenever an opponent attacks this fort, return 1 colonist from 1 of his ships.",
+      "id": 3
+    },
+    {
+      "type": "fort",
+      "name": "Flotilla Outpost",
+      "grid": [
+        [1, 0, "."],
+        [1, 1, "."],
+        [2, 1, "W"],
+        [2, 2, "."]
+      ],
+      "slots": 3,
+      "description": "Whenever an opponent attacks another 1 of your forts, he rolls 1 fewer die.",
+      "id": 4
+    },
+    {
+      "type": "fort",
+      "name": "Formidable Fortress",
+      "grid": [
+        [2, 0, "."],
+        [2, 1, "B"],
+        [2, 2, "."],
+        [2, 3, "."]
+      ],
+      "slots": 3,
+      "description": "Whenever an opponent attacks this fort, he rolls 1 fewer die.",
+      "id": 5
+    },
+    {
+      "type": "fort",
+      "name": "Fortified Stronghold",
+      "grid": [
+        [1, 0, "G"],
+        [1, 1, "."],
+        [1, 2, "."],
+        [2, 0, "."]
+      ],
+      "slots": 3,
+      "description": "Whenever an opponent attacks this fort, he cannot reroll [B] results.",
+      "id": 6
+    },
+    {
+      "type": "fort",
+      "name": "Guarded Fortress",
+      "grid": [
+        [1, 1, "B"],
+        [2, 0, "."],
+        [2, 1, "."],
+        [2, 2, "."]
+      ],
+      "slots": 4,
+      "description": "During a Second Wave attack on this fort, you choose which cubes are destroyed.",
+      "id": 7
+    },
+    {
+      "type": "fort",
+      "name": "Lighthouse Outpost",
+      "grid": [
+        [0, 1, "."],
+        [0, 2, "W"],
+        [1, 2, "."],
+        [2, 2, "."]
+      ],
+      "slots": 4,
+      "description": "Whenever 1 of your ships is destroyed, return it to your hand.",
+      "id": 8
+    },
+    {
+      "type": "fort",
+      "name": "Reefside Fortress",
+      "grid": [
+        [1, 2, "."],
+        [2, 0, "."],
+        [2, 1, "."],
+        [2, 2, "B"]
+      ],
+      "slots": 4,
+      "description": "Whenever an opponent attacks this fort, he cannot use his ships' abilities.",
+      "id": 9
+    },
+    {
+      "type": "fort",
+      "name": "Reinforced Stronghold",
+      "grid": [
+        [1, 0, "."],
+        [1, 1, "G"],
+        [1, 2, "."],
+        [2, 1, "."]
+      ],
+      "slots": 4,
+      "description": "Whenever an opponent attacks this fort, he cannot reroll [S] results.",
+      "id": 10
+    },
+    {
+      "type": "fort",
+      "name": "Robust Stronghold",
+      "grid": [
+        [1, 1, "G"],
+        [1, 2, "."],
+        [2, 1, "."],
+        [2, 2, "."]
+      ],
+      "slots": 4,
+      "description": "Whenever you build a building here, gain 1 gold.",
+      "id": 11
+    },
+    {
+      "type": "fort",
+      "name": "Saboteur Outpost",
+      "grid": [
+        [0, 2, "."],
+        [0, 3, "W"],
+        [1, 0, "."],
+        [2, 0, "."]
+      ],
+      "slots": 3,
+      "description": "Whenever an opponent attacks this fort, destroy 1 cube from his supply.",
+      "id": 12
+    },
+    {
+      "type": "fort",
+      "name": "Scout Outpost",
+      "grid": [
+        [1, 1, "W"],
+        [1, 2, "."],
+        [2, 0, "."],
+        [2, 1, "."]
+      ],
+      "slots": 3,
+      "description": "Whenever an opponent builds a ship, building, or fort, he scores 1 fewer coin.",
+      "id": 13
+    },
+    {
+      "type": "fort",
+      "name": "Secluded Fortress",
+      "grid": [
+        [1, 0, "."],
+        [2, 0, "."],
+        [2, 1, "B"],
+        [2, 2, "."]
+      ],
+      "slots": 4,
+      "description": "Whenever an opponent attacks this fort, he cannot use his building' abilities.",
+      "id": 14
+    },
+    {
+      "type": "fort",
+      "name": "Secret Fortress",
+      "grid": [
+        [1, 1, "B"],
+        [1, 2, "."],
+        [2, 1, "."],
+        [2, 2, "."]
+      ],
+      "slots": 3,
+      "description": "Whenever an opponent attacks this fort, he skips the Reinforce Step.",
+      "id": 15
+    },
+    {
+      "type": "fort",
+      "name": "Steep-Walled Stronghold",
+      "grid": [
+        [1, 0, "."],
+        [1, 1, "G"],
+        [1, 2, "."],
+        [1, 3, "."]
+      ],
+      "slots": 3,
+      "description": "Whenever an opponent attacks this fort and re-rolls, he must re-roll all the dice.",
+      "id": 16
+    },
+    {
+      "type": "fort",
+      "name": "Spy Outpost",
+      "grid": [
+        [0, 3, "."],
+        [1, 3, "."],
+        [2, 0, "."],
+        [2, 1, "W"]
+      ],
+      "slots": 4,
+      "description": "When you attack any fort, you may look at the defender's hand.",
+      "id": 17
+    },
+    {
+      "type": "fort",
+      "name": "Supported Stronghold",
+      "grid": [
+        [1, 0, "."],
+        [1, 1, "G"],
+        [1, 2, "."],
+        [2, 2, "."]
+      ],
+      "slots": 3,
+      "description": "Whenever an opponent attacks this fort, he re-rolls 1 fewer time.",
+      "id": 18
+    },
+    {
+      "type": "building",
+      "name": "Academy",
+      "requires": 2,
+      "gold": 2,
+      "repair": "B",
+      "description": "Whenever you attack, you may remove one colonist from this building to re-roll 1 additional time.",
+      "id": 19
+    },
+    {
+      "type": "building",
+      "name": "Armory",
+      "requires": 1,
+      "gold": 1,
+      "repair": "B",
+      "description": "Whenever you attack, add 1 [G] to your result.",
+      "id": 20
+    },
+    {
+      "type": "building",
+      "name": "Cannon Smith",
+      "requires": 1,
+      "gold": 1,
+      "repair": "B",
+      "description": "Whenever you attack, add 1 [B] to your result.",
+      "id": 21
+    },
+    {
+      "type": "building",
+      "name": "Cannonball Forge",
+      "requires": 1,
+      "gold": 1,
+      "repair": "B",
+      "description": "Whenever you attack, add 1 [W] to your result.",
+      "id": 22
+    },
+    {
+      "type": "building",
+      "name": "Governor's Mansion",
+      "requires": 3,
+      "gold": 3,
+      "repair": "B",
+      "description": "When built, discard 1 random card from an opponent's building. Your opponents cannot take Draw actions.",
+      "id": 23
+    },
+    {
+      "type": "building",
+      "name": "Gunpowder House",
+      "requires": 1,
+      "gold": 1,
+      "repair": "B",
+      "description": "Whenever you attack, add 1 [S] to your result.",
+      "id": 24
+    },
+    {
+      "type": "building",
+      "name": "Infirmary",
+      "requires": 2,
+      "gold": 2,
+      "repair": "B",
+      "description": "Whenever 1 of your forts, buildings, or ships is destroyed, you may move its colonists to this building. (Limit 2 per turn)",
+      "id": 25
+    },
+    {
+      "type": "building",
+      "name": "Observatory",
+      "requires": 2,
+      "gold": 2,
+      "repair": "B",
+      "description": "Whenever you take a Draw action, discard the card you would have given an opponent.",
+      "id": 26
+    },
+    {
+      "type": "building",
+      "name": "Prison",
+      "requires": 3,
+      "gold": 3,
+      "repair": "B",
+      "description": "When built, return 1 colonist from each of your opponents' forts. Your opponents' forts cannot gain colonists.",
+      "id": 27
+    },
+    {
+      "type": "building",
+      "name": "Silver Smelter",
+      "requires": 2,
+      "gold": 2,
+      "repair": "B",
+      "description": "When built, remove any number of colonists from your other forts to score that many coins.",
+      "id": 28
+    },
+    {
+      "type": "building",
+      "name": "Trade Company",
+      "requires": 3,
+      "gold": 3,
+      "description": "When built, destroy an opponent's building. Your opponents cannot build any buildings.",
+      "repair": "B",
+      "id": 29
+    },
+    {
+      "type": "building",
+      "name": "Watchtower",
+      "requires": 3,
+      "gold": 3,
+      "description": "When built, destroy an opponent's ship. Your opponents cannot build any ships.",
+      "repair": "B",
+      "id": 30
+    },
+    {
+      "type": "ship",
+      "name": "Dominica",
+      "requires": 4,
+      "gold": 5,
+      "description": "[L]: Return 1 colonist off the defending fort.",
+      "id": 31
+    },
+    {
+      "type": "ship",
+      "name": "Magnifique",
+      "requires": 4,
+      "gold": 5,
+      "description": "[L]: Gain 1 gold.",
+      "id": 32
+    },
+    {
+      "type": "ship",
+      "name": "Raven",
+      "requires": 3,
+      "gold": 4,
+      "description": "[L]: Add 1 [B] to your result.",
+      "id": 33
+    },
+    {
+      "type": "ship",
+      "name": "Sister Catarina",
+      "requires": 2,
+      "gold": 3,
+      "description": "[L]: Add 1 [G] to your result.",
+      "id": 34
+    },
+    {
+      "type": "ship",
+      "name": "St. Daniel",
+      "requires": 3,
+      "gold": 4,
+      "description": "[L]: Add 1 [W] to your result.",
+      "id": 35
+    },
+    {
+      "type": "ship",
+      "name": "Victory",
+      "requires": 2,
+      "gold": 3,
+      "description": "[L]: Add 1 [S] to your result.",
+      "id": 36
+    }
+  ]
+}
