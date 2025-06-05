@@ -1,5 +1,4 @@
-// forts/StartingFort.ts
-import { FortBehavior } from '../types';
+import { Effect } from '../types';
 
     //   "type": "fort",
     //   "name": "Starting Fort",
@@ -13,7 +12,7 @@ import { FortBehavior } from '../types';
     //   "description": "Add [B,W] to your supply. Draw three cards then give one to your opponent.",
     //   "id": 0
 
-export const StartingFort: FortBehavior = {
+export const StartingFort: Effect = {
   id: 'fort-starting',
   name: 'Starting Fort',
 

@@ -1,48 +1,61 @@
 export type CardType = 'building' | 'fort' | 'ship';
 
+// Base type for all cards in the game
 export type Card = {
     id: string;
     type: CardType;
     name: string;
-    cost: number;
+    description: string;
 }
 
-export type Fort = {
-    id: string;
-    name: string;
-    colonistSlots: number;
-    placedColonists: number;
-    buildings: [];
-    effect?: Effect;
+// The following types extend the base type for the specific card types
+// Contains all information needed to render in hand
+export type FortCard = Card & {
+    grid: FortGridCell[][];
+    slots: number;  // number of colonist slots
+}
+
+export type BuildingCard = Card & {
+    cost: number;   // colonists required on fort
+    coins: number;  // coins awarded when played
+    repair: CubeColor[];  // cubes to use for repair when played
 };
 
-export type Effect = {
+export type ShipCard = Card & {
+    cost: number;  // colonists required on fort
+    colonists: number;  // number of colonists on this ship
+    coins: number;  // coins awarded when played
+}
+
+// These types contain all information once cards have been placed in tableau
+export type Fort = FortCard & {
+    openSlots: number;  // number of open slots for colonists
+    buildings: [];
+    effect?: CardEffect;
+};
+
+export type Building = BuildingCard & {
+    colonists: number;  // number of colonists placed on this building
+    effect?: CardEffect;
+};
+
+
+export type Ship = ShipCard & {
+    colonists: number;
+    effect?: CardEffect;
+};
+
+export type CardEffect = {
+    id: string;
     onPlayerAttack?: (gameState: GameState, player: Player) => GameState;  // e.g. "look at hand"
     onOpponentAttack?: (gameState: GameState, player: Player) => GameState;  // e.g. "cannot reroll"
+    onLeadership?: (gameState: GameState, player: Player) => GameState;  // e.g. "gain 1 reroll"
     onSecondWave?: (gameState: GameState, player: Player) => GameState;  // e.g. "gain 1 reroll"
     onShipDestroyed?: (gameState: GameState, player: Player) => GameState;  // e.g. "return to hand"
     onPlayBuilding?: (gameState: GameState, player: Player) => GameState;  // e.g. "gain 1 coin"
     onOpponentBuild?: (gameState: GameState, player: Player) => GameState;  // e.g. "1 less coin"
     // from quick scan of cards, more might be needed
 }
-
-export type Building = {
-    id: string;
-    name: string;
-    ability: string;
-    placedColonists: number;
-    effect?: string;
-};
-
-
-export type Ship = {
-    id: string;
-    name: string;
-    ability: string;
-    coins: number;
-    placedColonists: number;
-    effect?: string;
-};
 
 export type Player = {
     id: string;
@@ -52,9 +65,9 @@ export type Player = {
     buildings: Building[];
     forts: Fort[];
     ships: Ship[];
-    // fleet: object;
     colonists: number;  // remaining colonists on player board
     cubes: CubeReserve;  // personal cube supply
+
     // TODO: extra actions unlocked with colonists?
     attack_dice: number;
     rerolls: number;
@@ -75,7 +88,7 @@ export type CubeReserve = {
   gray: number;
 }
 
-export type FortCell =
+export type FortGridCell =
   | { type: 'cube'; color: CubeColor | null }
   | { type: 'NaC' };  // Not a Cell, space should remain empty
 
