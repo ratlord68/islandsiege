@@ -73,10 +73,14 @@ export type Player = {
     rerolls: number;
 }
 
+export type phase = 'initGame' | 'initDraw' | 'victory' | 'colonist' | 'action' | 'draw' | 'build' | 'attack' | 'reroll' | 'endTurn' | 'gameEnd'
+
 export type GameState = {
     players: Player[];
     currentPlayerIndex: number;
     winner: string | null;
+    deck: GameCard[];         // Draw pile (top = last)
+    discardPile: GameCard[];  // Discards (top = last)
     phase: 'init_draw' | 'check_victory' | 'place_conlonists' | 'action' | 'draw' | 'play' | 'attack' | 'end_turn';
 };
 
@@ -91,6 +95,9 @@ export type CubeReserve = {
 export type FortGridCell =
   | { type: 'cube'; color: CubeColor | null }
   | { type: 'NaC' };  // Not a Cell, space should remain empty
+
+
+export type DieFace = "W" | "B" | "G" | "L" | "S";
 
 // globals
 // Deck Pile

@@ -1,4 +1,4 @@
-import { Effect } from '../types';
+import { Effect } from '../../types';
 
     //   "type": "fort",
     //   "name": "Starting Fort",
