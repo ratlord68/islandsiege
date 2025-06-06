@@ -73,34 +73,35 @@ export type Player = {
     rerolls: number;
 }
 
-export type phase = 'initGame' | 'initDraw' | 'victory' | 'colonist' | 'action' | 'draw' | 'build' | 'attack' | 'reroll' | 'endTurn' | 'gameEnd'
+export type Phase = 'initGame' | 'initDraw' | 'victory' | 'colonist' | 'action' | 'draw' | 'build' | 'attack' | 'reroll' | 'endTurn' | 'gameEnd'
+
+export type Game = {
+    id: string;
+    state: GameState;
+}
 
 export type GameState = {
     players: Player[];
-    currentPlayerIndex: number;
-    winner: string | null;
-    deck: GameCard[];         // Draw pile (top = last)
-    discardPile: GameCard[];  // Discards (top = last)
-    phase: 'init_draw' | 'check_victory' | 'place_conlonists' | 'action' | 'draw' | 'play' | 'attack' | 'end_turn';
+    currentPlayer: Player;
+
+    // ordered bottom -> top
+    deck: Card[];
+    discardPile: Card[];
+    phase: Phase;
 };
 
 export type CubeColor = 'black' | 'white' | 'gray';
 
+// Establish one for each player, and one general
 export type CubeReserve = {
-  black: number;
-  white: number;
-  gray: number;
+  black?: number;
+  white?: number;
+  gray?: number;
 }
 
 export type FortGridCell =
   | { type: 'cube'; color: CubeColor | null }
   | { type: 'NaC' };  // Not a Cell, space should remain empty
 
-
-export type DieFace = "W" | "B" | "G" | "L" | "S";
-
-// globals
-// Deck Pile
-// Discard Pile
-// Cube Supply
-// Coin Supply
+// White, Black, Gray, Leadership, Red
+export type DieFace = "W" | "B" | "G" | "L" | "R";
