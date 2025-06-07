@@ -18,7 +18,7 @@ describe("AttackRoll", () => {
 
   it("should reroll only the specified dice", () => {
     // Spy on Die.prototype.roll and control the value assignment manually
-    const values: DieValue[] = ["L", "G", "B", "R"];
+    const values: DieValue[] = ["L", "G", "B", "T"];
     let rolls = 0;
 
     jest.spyOn(Die.prototype, "roll").mockImplementation(function () {
@@ -31,7 +31,7 @@ describe("AttackRoll", () => {
 
     roll.reroll([1]);
     rolled = roll.value;
-    expect(rolled).toEqual(["L", "R", "B"]); // only index 1 changed
+    expect(rolled).toEqual(["L", "T", "B"]); // only index 1 changed
   });
 
   it("throws error if attempting to reroll past allotted limit", () => {
