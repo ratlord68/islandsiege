@@ -1,4 +1,3 @@
-
 // White, Black, Gray, Leadership, Red
 export type DieValue = "W" | "B" | "G" | "L" | "R";
 
