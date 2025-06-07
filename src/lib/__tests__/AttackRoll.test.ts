@@ -1,5 +1,5 @@
 import { AttackRoll } from "../AttackRoll";
-import { Die, DieValue } from "../Dice";
+import { Die, DieValue } from "../Die";
 
 describe("AttackRoll", () => {
   afterEach(() => {
@@ -8,7 +8,7 @@ describe("AttackRoll", () => {
 
   it("should initialize with the correct number of dice", () => {
     const roll = new AttackRoll(3, 1);
-    const rolled = roll.getRolled();
+    const rolled = roll.value;
 
     expect(rolled).toHaveLength(3);
     rolled.forEach((face) => {
@@ -26,11 +26,11 @@ describe("AttackRoll", () => {
     });
 
     const roll = new AttackRoll(3, 1);
-    let rolled = roll.getRolled();
+    let rolled = roll.value;
     expect(rolled).toEqual(["L", "G", "B"]);
 
     roll.reroll([1]);
-    rolled = roll.getRolled();
+    rolled = roll.value;
     expect(rolled).toEqual(["L", "R", "B"]); // only index 1 changed
   });
 
@@ -45,12 +45,26 @@ describe("AttackRoll", () => {
     expect(() => roll.reroll([-1, 2, 999])).toThrow("Invalid index");
   });
 
-  it("getRolled should return a copy, not the original array", () => {
+  it("valuehould return a copy, not the original array", () => {
     const roll = new AttackRoll(2, 0);
-    const dice = roll.getRolled();
-    dice[0] = "X" as DieValue;
+    const result = roll.value;
+    result[0] = "X" as DieValue;
 
     // Internal state should not be affected
-    expect(roll.getRolled()).not.toContain("X");
+    expect(roll.value).not.toContain("X");
+  });
+
+  it("once finalized, cannot reroll", () => {
+    let roll = new AttackRoll(2, 1);
+    expect(roll.rollsRemaining);
+    expect(roll.isFinished).toBe(false);
+    roll.reroll();
+    expect(roll.isFinished).toBe(true);
+
+    roll = new AttackRoll(2, 4);
+    expect(roll.rollsRemaining).toBe(4);
+    roll.finish();
+    expect(() => roll.reroll()).toThrow("No rerolls remain");
+    expect(roll.isFinished).toBe(true);
   });
 });

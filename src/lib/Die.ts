@@ -1,8 +1,8 @@
-// White, Black, Gray, Leadership, Red
-export type DieValue = "W" | "B" | "G" | "L" | "R";
+// White, Black, Gray, Leadership, Target
+export type DieValue = "W" | "B" | "G" | "L" | "T";
 
 export class Die {
-  public static faces: DieValue[] = ["W", "B", "G", "G", "L", "R"];
+  public static faces: DieValue[] = ["W", "B", "G", "G", "L", "T"];
   public value: DieValue;
   private countRolled: number = 0;
 
@@ -16,7 +16,7 @@ export class Die {
     this.value = Die.faces[i];
   }
 
-  getRolls(): number {
+  get rollCount(): number {
     return this.countRolled;
   }
 }
