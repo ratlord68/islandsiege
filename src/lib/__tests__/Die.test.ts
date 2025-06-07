@@ -1,7 +1,7 @@
-import { Die, DieValue } from "../Dice";
+import { Die, DieValue } from "../Die";
 
 describe("Die", () => {
-  const validFaces: DieValue[] = ["W", "B", "G", "L", "R"];
+  const validFaces: DieValue[] = ["W", "B", "G", "L", "T"];
 
   it("initializes with a valid face", () => {
     const die = new Die();
@@ -16,10 +16,10 @@ describe("Die", () => {
   });
   it("ensure number of rolls is tracked", () => {
     const die = new Die();
-    expect(die.getRolls()).toBe(1);
+    expect(die.rollCount).toBe(1);
     die.roll();
-    expect(die.getRolls()).toBe(2);
+    expect(die.rollCount).toBe(2);
     die.roll();
-    expect(die.getRolls()).toBe(3);
+    expect(die.rollCount).toBe(3);
   });
 });
