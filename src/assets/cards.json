@@ -11,7 +11,7 @@
       ],
       "slots": 4,
       "description": "Add [B,W] to your supply. Draw three cards then give one to your opponent.",
-      "id": 0
+      "id": "startingFort"
     },
     {
       "type": "fort",
@@ -24,7 +24,7 @@
       ],
       "slots": 3,
       "description": "Whenever an opponent attacks this fort and is done rolling, you may reroll 1 of the dice.",
-      "id": 1
+      "id": "barricadedFortress"
     },
     {
       "type": "fort",
@@ -37,7 +37,7 @@
       ],
       "slots": 4,
       "description": "Whenever an opponent attacks this fort, he cannot reroll [L] results.",
-      "id": 2
+      "id": "bracedStronghold"
     },
     {
       "type": "fort",
@@ -50,7 +50,7 @@
       ],
       "slots": 4,
       "description": "Whenever an opponent attacks this fort, return 1 colonist from 1 of his ships.",
-      "id": 3
+      "id": "coveOutpost"
     },
     {
       "type": "fort",
@@ -63,7 +63,7 @@
       ],
       "slots": 3,
       "description": "Whenever an opponent attacks another 1 of your forts, he rolls 1 fewer die.",
-      "id": 4
+      "id": "flotillaOutpost"
     },
     {
       "type": "fort",
@@ -76,7 +76,7 @@
       ],
       "slots": 3,
       "description": "Whenever an opponent attacks this fort, he rolls 1 fewer die.",
-      "id": 5
+      "id": "formidableFortress"
     },
     {
       "type": "fort",
@@ -89,7 +89,7 @@
       ],
       "slots": 3,
       "description": "Whenever an opponent attacks this fort, he cannot reroll [B] results.",
-      "id": 6
+      "id": "fortifiedStronghold"
     },
     {
       "type": "fort",
@@ -102,7 +102,7 @@
       ],
       "slots": 4,
       "description": "During a Second Wave attack on this fort, you choose which cubes are destroyed.",
-      "id": 7
+      "id": "guardedFortress"
     },
     {
       "type": "fort",
@@ -115,7 +115,7 @@
       ],
       "slots": 4,
       "description": "Whenever 1 of your ships is destroyed, return it to your hand.",
-      "id": 8
+      "id": "lighthouseOutpost"
     },
     {
       "type": "fort",
@@ -128,7 +128,7 @@
       ],
       "slots": 4,
       "description": "Whenever an opponent attacks this fort, he cannot use his ships' abilities.",
-      "id": 9
+      "id": "reefsideFortress"
     },
     {
       "type": "fort",
@@ -141,7 +141,7 @@
       ],
       "slots": 4,
       "description": "Whenever an opponent attacks this fort, he cannot reroll [S] results.",
-      "id": 10
+      "id": "reinforcedStronghold"
     },
     {
       "type": "fort",
@@ -154,7 +154,7 @@
       ],
       "slots": 4,
       "description": "Whenever you build a building here, gain 1 gold.",
-      "id": 11
+      "id": "robustStronghold"
     },
     {
       "type": "fort",
@@ -167,7 +167,7 @@
       ],
       "slots": 3,
       "description": "Whenever an opponent attacks this fort, destroy 1 cube from his supply.",
-      "id": 12
+      "id": "saboteurOutpost"
     },
     {
       "type": "fort",
@@ -180,7 +180,7 @@
       ],
       "slots": 3,
       "description": "Whenever an opponent builds a ship, building, or fort, he scores 1 fewer coin.",
-      "id": 13
+      "id": "scoutOutpost"
     },
     {
       "type": "fort",
@@ -193,7 +193,7 @@
       ],
       "slots": 4,
       "description": "Whenever an opponent attacks this fort, he cannot use his building' abilities.",
-      "id": 14
+      "id": "secludedFortress"
     },
     {
       "type": "fort",
@@ -206,7 +206,7 @@
       ],
       "slots": 3,
       "description": "Whenever an opponent attacks this fort, he skips the Reinforce Step.",
-      "id": 15
+      "id": "secretFortress"
     },
     {
       "type": "fort",
@@ -219,7 +219,7 @@
       ],
       "slots": 3,
       "description": "Whenever an opponent attacks this fort and re-rolls, he must re-roll all the dice.",
-      "id": 16
+      "id": "steepWalledStronghold"
     },
     {
       "type": "fort",
@@ -232,7 +232,7 @@
       ],
       "slots": 4,
       "description": "When you attack any fort, you may look at the defender's hand.",
-      "id": 17
+      "id": "spyOutpost"
     },
     {
       "type": "fort",
@@ -245,7 +245,7 @@
       ],
       "slots": 3,
       "description": "Whenever an opponent attacks this fort, he re-rolls 1 fewer time.",
-      "id": 18
+      "id": "supportedStronghold"
     },
     {
       "type": "building",
@@ -254,7 +254,7 @@
       "gold": 2,
       "repair": "B",
       "description": "Whenever you attack, you may remove one colonist from this building to re-roll 1 additional time.",
-      "id": 19
+      "id": "academy"
     },
     {
       "type": "building",
@@ -263,7 +263,7 @@
       "gold": 1,
       "repair": "B",
       "description": "Whenever you attack, add 1 [G] to your result.",
-      "id": 20
+      "id": "armory"
     },
     {
       "type": "building",
@@ -272,7 +272,7 @@
       "gold": 1,
       "repair": "B",
       "description": "Whenever you attack, add 1 [B] to your result.",
-      "id": 21
+      "id": "cannonSmith"
     },
     {
       "type": "building",
@@ -281,7 +281,7 @@
       "gold": 1,
       "repair": "B",
       "description": "Whenever you attack, add 1 [W] to your result.",
-      "id": 22
+      "id": "cannonballForge"
     },
     {
       "type": "building",
@@ -290,7 +290,7 @@
       "gold": 3,
       "repair": "B",
       "description": "When built, discard 1 random card from an opponent's building. Your opponents cannot take Draw actions.",
-      "id": 23
+      "id": "governorsMansion"
     },
     {
       "type": "building",
@@ -299,7 +299,7 @@
       "gold": 1,
       "repair": "B",
       "description": "Whenever you attack, add 1 [S] to your result.",
-      "id": 24
+      "id": "gunpowderHouse"
     },
     {
       "type": "building",
@@ -308,7 +308,7 @@
       "gold": 2,
       "repair": "B",
       "description": "Whenever 1 of your forts, buildings, or ships is destroyed, you may move its colonists to this building. (Limit 2 per turn)",
-      "id": 25
+      "id": "infirmary"
     },
     {
       "type": "building",
@@ -317,7 +317,7 @@
       "gold": 2,
       "repair": "B",
       "description": "Whenever you take a Draw action, discard the card you would have given an opponent.",
-      "id": 26
+      "id": "observatory"
     },
     {
       "type": "building",
@@ -326,7 +326,7 @@
       "gold": 3,
       "repair": "B",
       "description": "When built, return 1 colonist from each of your opponents' forts. Your opponents' forts cannot gain colonists.",
-      "id": 27
+      "id": "prison"
     },
     {
       "type": "building",
@@ -335,7 +335,7 @@
       "gold": 2,
       "repair": "B",
       "description": "When built, remove any number of colonists from your other forts to score that many coins.",
-      "id": 28
+      "id": "silverSmelter"
     },
     {
       "type": "building",
@@ -344,7 +344,7 @@
       "gold": 3,
       "description": "When built, destroy an opponent's building. Your opponents cannot build any buildings.",
       "repair": "B",
-      "id": 29
+      "id": "tradeCompany"
     },
     {
       "type": "building",
@@ -353,7 +353,7 @@
       "gold": 3,
       "description": "When built, destroy an opponent's ship. Your opponents cannot build any ships.",
       "repair": "B",
-      "id": 30
+      "id": "watchtower"
     },
     {
       "type": "ship",
@@ -361,7 +361,7 @@
       "requires": 4,
       "gold": 5,
       "description": "[L]: Return 1 colonist off the defending fort.",
-      "id": 31
+      "id": "dominica"
     },
     {
       "type": "ship",
@@ -369,7 +369,7 @@
       "requires": 4,
       "gold": 5,
       "description": "[L]: Gain 1 gold.",
-      "id": 32
+      "id": "magnifique"
     },
     {
       "type": "ship",
@@ -377,7 +377,7 @@
       "requires": 3,
       "gold": 4,
       "description": "[L]: Add 1 [B] to your result.",
-      "id": 33
+      "id": "raven"
     },
     {
       "type": "ship",
@@ -385,7 +385,7 @@
       "requires": 2,
       "gold": 3,
       "description": "[L]: Add 1 [G] to your result.",
-      "id": 34
+      "id": "sisterCatarina"
     },
     {
       "type": "ship",
@@ -393,7 +393,7 @@
       "requires": 3,
       "gold": 4,
       "description": "[L]: Add 1 [W] to your result.",
-      "id": 35
+      "id": "stDaniel"
     },
     {
       "type": "ship",
@@ -401,7 +401,7 @@
       "requires": 2,
       "gold": 3,
       "description": "[L]: Add 1 [S] to your result.",
-      "id": 36
+      "id": "victory"
     }
   ]
 }
