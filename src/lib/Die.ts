@@ -3,7 +3,7 @@ export type DieValue = "W" | "B" | "G" | "L" | "T";
 
 export class Die {
   public static faces: DieValue[] = ["W", "B", "G", "G", "L", "T"];
-  public value: DieValue;
+  public value!: DieValue;
   private countRolled: number = 0;
 
   constructor() {

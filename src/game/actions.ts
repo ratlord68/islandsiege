@@ -1,5 +1,4 @@
-import { Card, Game, Player } from "../types";
-import { shuffleDeck } from "../lib/shuffleDeck";
+import type { Card, Game, Player } from "../types";
 
 import cards from "../assets/cards.json";
 

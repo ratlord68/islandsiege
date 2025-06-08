@@ -1,3 +1,5 @@
+import type { GameState } from "../types";
+
 export const GamePhases = {
   // Game Setup
   INIT_GAME: "INIT_GAME",
@@ -20,31 +22,31 @@ export const GamePhases = {
   END_TURN: "END_TURN",
 };
 
-function advancePhase(state: GameState): GameState {
-  switch (state.phase) {
-    case "initDraw":
-      return initDrawPhase(state);
-    case "victory":
-      return checkVictory(state);
-    case "colonist":
-      return colonistPhase(state);
-    case "action":
-      return actionPhase(state);
-    case "draw":
-      return drawPhase(state);
-    case "build":
-      return buildPhase(state);
-    case "attack":
-      return attackPhase(state);
-    case "reroll":
-      return rerollPhase(state);
-    case "endTurn":
-      return endTurn(state);
-    case "victory":
-      return checkVictory(state);
-    case "gameEnd":
-      return endGame(state);
-    default:
-      throw new Error(`Unknown phase: ${state.phase}`);
-  }
-}
+// function advancePhase(state: GameState): GameState {
+//   switch (state.phase) {
+//     case "initDraw":
+//       return initDrawPhase(state);
+//     case "victory":
+//       return checkVictory(state);
+//     case "colonist":
+//       return colonistPhase(state);
+//     case "action":
+//       return actionPhase(state);
+//     case "draw":
+//       return drawPhase(state);
+//     case "build":
+//       return buildPhase(state);
+//     case "attack":
+//       return attackPhase(state);
+//     case "reroll":
+//       return rerollPhase(state);
+//     case "endTurn":
+//       return endTurn(state);
+//     case "victory":
+//       return checkVictory(state);
+//     case "gameEnd":
+//       return endGame(state);
+//     default:
+//       throw new Error(`Unknown phase: ${state.phase}`);
+//   }
+// }

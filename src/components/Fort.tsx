@@ -1,9 +1,9 @@
 import React from "react";
-import type { FortCell } from "../types";
+import type { FortGridCell } from "../types";
 import { CubeColors } from "../colors";
 
 type FortGridProps = {
-  grid: FortCell[][];
+  grid: FortGridCell[][];
   view: "hand" | "tableau";
   showLabels?: boolean;
 };

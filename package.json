@@ -41,6 +41,8 @@
   "devDependencies": {
     "@babel/preset-typescript": "^7.27.1",
     "@types/jest": "^29.5.14",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.6",
     "prettier": "^3.5.3",
     "pretty-quick": "^4.2.2",
     "simple-git-hooks": "^2.13.0",
