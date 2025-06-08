@@ -1,5 +1,5 @@
 import cardData from "../assets/cards.json";
-import { Card, FortCard, BuildingCard, ShipCard } from "../types";
+import { Card, FortCard, BuildingCard, ShipCard } from "./Card";
 
 export class Deck {
   private drawPile: Card[];

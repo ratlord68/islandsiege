@@ -1,4 +1,7 @@
-import type { CardType, FortGridCell, CubeColor } from "../types";
+import type { CubeColor } from "../types";
+import type { FortGridSpec } from "./FortGrid";
+
+export type CardType = "building" | "fort" | "ship";
 
 export interface Card {
   id: string;
@@ -8,7 +11,7 @@ export interface Card {
 }
 
 export interface FortCard extends Card {
-  grid: FortGridCell[][];
+  gridSpec: FortGridSpec;
   slots: number; // number of colonist slots
 }
 
@@ -16,7 +19,7 @@ export interface BuildingCard extends Card {
   cost: number; // colonists required on fort
   coins: number; // coins awarded when played
   colonists: number; // number of colonists on this building
-  repair: CubeColor; // cube color to use for repair when played - AFAIK, always singular.
+  repairColor: CubeColor; // cube color to use for repair when played - AFAIK, always singular.
 }
 
 export interface ShipCard extends Card {

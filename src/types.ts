@@ -1,49 +1,3 @@
-export type CardType = "building" | "fort" | "ship";
-
-// Base type for all cards in the game
-export type Card = {
-  id: string;
-  type: CardType;
-  name: string;
-  description: string;
-};
-
-// The following types extend the base type for the specific card types
-// Contains all information needed to render in hand
-export type FortCard = Card & {
-  grid: FortGridCell[][];
-  slots: number; // number of colonist slots
-};
-
-export type BuildingCard = Card & {
-  cost: number; // colonists required on fort
-  coins: number; // coins awarded when played
-  repair: CubeColor[]; // cubes to use for repair when played
-};
-
-export type ShipCard = Card & {
-  cost: number; // colonists required on fort
-  colonists: number; // number of colonists on this ship
-  coins: number; // coins awarded when played
-};
-
-// These types contain all information once cards have been placed in tableau
-export type Fort = FortCard & {
-  openSlots: number; // number of open slots for colonists
-  buildings: [];
-  effect?: CardEffect;
-};
-
-export type Building = BuildingCard & {
-  colonists: number; // number of colonists placed on this building
-  effect?: CardEffect;
-};
-
-export type Ship = ShipCard & {
-  colonists: number;
-  effect?: CardEffect;
-};
-
 export type CardEffect = {
   id: string;
   onPlayerAttack?: (gameState: GameState, player: Player) => GameState; // e.g. "look at hand"
@@ -108,7 +62,3 @@ export type CubeReserve = {
   white?: number;
   gray?: number;
 };
-
-export type FortGridCell =
-  | { type: "cube"; color: CubeColor | null }
-  | { type: "NaC" }; // Not a Cell, space should remain empty
