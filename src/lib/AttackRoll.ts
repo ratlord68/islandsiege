@@ -1,7 +1,7 @@
 import { Die, DieValue } from "./Die";
 
 export class AttackRoll {
-  private dice: Die[];
+  private dice!: Die[];
   private rerollsTaken: number = 0;
   public isFinished: boolean = false;
 

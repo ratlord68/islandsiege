@@ -1,4 +1,4 @@
-import { Effect } from "../../types";
+// import type { CardEffect } from "../../types";
 
 //   "type": "fort",
 //   "name": "Starting Fort",
@@ -12,11 +12,13 @@ import { Effect } from "../../types";
 //   "description": "Add [B,W] to your supply. Draw three cards then give one to your opponent.",
 //   "id": 0
 
-export const StartingFort: Effect = {
-  id: "fort-starting",
-  name: "Starting Fort",
+// export const StartingFort: CardEffect = {
+//   id: "startingFort",
+//   name: "Starting Fort",
 
-  onBuild: (gameState, player) => {
-    player.addCubes({ black: 1, white: 1 });
-  },
-};
+//   onBuild: (gameState, player) => {
+//     player.addCubes({ black: 1, white: 1 });
+//   },
+// };
+
+export {};

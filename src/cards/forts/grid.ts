@@ -1,11 +1,11 @@
-import { FortCell, CubeColor } from "../types";
+import type { FortGridCell, CubeColor } from "../../types";
 
 export function parseFortGrid(
   gridSpec: [number, number, string][],
   height: number,
   width: number,
-): FortCell[][] {
-  const grid: FortCell[][] = Array.from({ length: height }, () =>
+): FortGridCell[][] {
+  const grid: FortGridCell[][] = Array.from({ length: height }, () =>
     Array.from({ length: width }, () => ({ type: "NaC" })),
   );
 

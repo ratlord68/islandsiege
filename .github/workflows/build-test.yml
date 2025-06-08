@@ -24,13 +24,12 @@ jobs:
 
       - name: Run Tests
         run: npm test -- --watchAll=false
-    # # Once this actually builds, enable this
-    # - name: Build React App
-    #   run: npm run build
 
-    # - name: Deploy to GitHub Pages
-    #   if: github.ref == 'refs/heads/main' && success()  # deploy only on main branch if tests pass
-    #   uses: peaceiris/actions-gh-pages@v4
-    #   with:
-    #     github_token: ${{ secrets.GITHUB_TOKEN }}
-    #     publish_dir: ./build
+      - name: Build React App
+        run: npm run build
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main' && success() # deploy only on main branch if tests pass
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
