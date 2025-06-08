@@ -14,7 +14,6 @@ Use npm to install the required packages. From the project root run the followin
 
 `npm install`
 
-
 ## Running
 
 Use npm to run the project. From the project root run the following command:
@@ -22,7 +21,6 @@ Use npm to run the project. From the project root run the following command:
 `npm start`
 
 You can also use `npm run` to list the possible run commands
-
 
 ## Testing
 
