@@ -1,11 +1,19 @@
 import type { CubeColor } from '../types';
 
-export type FortGridCell =
-  | { type: 'cube'; color: CubeColor | null }
-  | { type: 'NaC' };
+export type FortGridNaC = { type: 'NaC' };
+export type FortGridCube = { type: 'cube'; color: CubeColor | null };
+export type FortGridCell = FortGridCube | FortGridNaC;
 
 export type FortGridSpec = [number, number, string][];
 export const FORT_GRID_SIZE = 4;
+
+type CubeInfo = {
+  row: number;
+  col: number;
+  color: CubeColor | null;
+  protectBonus: boolean;
+  connectStrength: number;
+};
 
 function cubeSymbolToColor(symbol: string): CubeColor {
   switch (symbol) {
@@ -23,6 +31,7 @@ function cubeSymbolToColor(symbol: string): CubeColor {
 export class FortGrid {
   readonly size: number = FORT_GRID_SIZE;
   private grid: FortGridCell[][];
+  private cubeInfoCache: CubeInfo[] = [];
 
   constructor(gridSpec: FortGridSpec) {
     this.grid = Array.from({ length: this.size }, () =>
@@ -34,22 +43,58 @@ export class FortGrid {
         throw new Error(`Invalid grid position: (${row}, ${col})`);
       }
 
+      const color = val === '.' ? null : cubeSymbolToColor(val);
       this.grid[row][col] = {
         type: 'cube',
-        color: val === '.' ? null : cubeSymbolToColor(val),
+        color,
       };
+
+      this.cubeInfoCache.push({
+        row,
+        col,
+        // the following properties may be changed throughout
+        color,
+        protectBonus: false,
+        connectStrength: 0,
+      });
     }
+    this.updateCubeInfo();
   }
 
-  get cells(): FortGridCell[][] {
+  get allCells(): FortGridCell[][] {
     return this.grid;
   }
 
-  getCell(row: number, col: number): FortGridCell | undefined {
+  get cubeInfo(): CubeInfo[] {
+    return this.cubeInfoCache;
+  }
+
+  cubeInfoAt(row: number, col: number): CubeInfo {
+    const info = this.cubeInfoCache.find((i) => i.row === row && i.col === col);
+    if (!info) {
+      throw new Error(`No cube info found at (${row}, ${col})`);
+    }
+    return info;
+  }
+
+  cellAt(row: number, col: number): FortGridCell {
     return this.grid[row]?.[col];
   }
 
-  isFrontBlocked(row: number, col: number): boolean {
+  private updateCubeInfo(): void {
+    for (const info of this.cubeInfoCache) {
+      const { row, col } = info;
+      const cell = this.grid[row][col];
+
+      if (cell.type !== 'cube') continue;
+
+      info.color = cell.color ?? null;
+      info.protectBonus = this.cellAtIsProtected(row, col);
+      info.connectStrength = this.cellAtConnectedStrength(row, col);
+    }
+  }
+
+  cellAtIsProtected(row: number, col: number): boolean {
     for (let r = 0; r < row; r++) {
       const cell = this.grid[r][col];
       if (cell.type === 'cube' && cell.color !== null) return true;
@@ -57,26 +102,84 @@ export class FortGrid {
     return false;
   }
 
-  getAdjacentMatchingColor(row: number, col: number): CubeColor[] {
-    const cell = this.grid[row]?.[col];
-    if (cell?.type !== 'cube' || cell.color == null) return [];
+  cellAtConnectedStrength(row: number, col: number): number {
+    return this.traverseConnectedCubes(row, col).length;
+  }
 
-    const dirs = [
-      [-1, 0],
-      [1, 0],
-      [0, -1],
-      [0, 1],
-    ];
-    const matching: CubeColor[] = [];
+  buildSpec(specs: FortGridSpec): void {
+    for (const [r, c, symbol] of specs) {
+      const cell = this.grid[r][c];
+      if (cell.type !== 'cube') continue;
+      if (cell.color) {
+        throw new Error('Attempting to build on non-empty cell.');
+      }
 
-    for (const [dr, dc] of dirs) {
-      const neighbor = this.grid[row + dr]?.[col + dc];
-      if (neighbor?.type === 'cube' && neighbor.color === cell.color) {
-        matching.push(neighbor.color);
+      cell.color = symbol === '.' ? null : cubeSymbolToColor(symbol);
+    }
+
+    this.updateCubeInfo();
+  }
+
+  destroyAt(row: number, col: number): void {
+    this.traverseConnectedCubes(row, col, (r, c) => {
+      const cell = this.grid[r][c];
+      if (cell.type === 'cube') {
+        cell.color = null;
+      }
+    });
+
+    this.updateCubeInfo();
+  }
+
+  private traverseConnectedCubes(
+    row: number,
+    col: number,
+    fn?: (r: number, c: number) => void,
+  ): [number, number][] {
+    const start = this.grid[row]?.[col];
+    if (!start || start.type !== 'cube' || start.color == null) return [];
+
+    const color = start.color;
+    const visited = new Set<string>();
+    const stack = [[row, col]];
+    const result: [number, number][] = [];
+
+    while (stack.length > 0) {
+      const [r, c] = stack.pop()!;
+      const key = `${r},${c}`;
+      if (visited.has(key)) continue;
+
+      const cell = this.grid[r]?.[c];
+      if (!cell || cell.type !== 'cube' || cell.color !== color) continue;
+
+      visited.add(key);
+      result.push([r, c]);
+
+      // optional callback function
+      if (fn) fn(r, c);
+
+      const dirs = [
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1],
+      ];
+      for (const [dr, dc] of dirs) {
+        const nr = r + dr;
+        const nc = c + dc;
+        if (
+          nr >= 0 &&
+          nr < this.size &&
+          nc >= 0 &&
+          nc < this.size &&
+          !visited.has(`${nr},${nc}`)
+        ) {
+          stack.push([nr, nc]);
+        }
       }
     }
 
-    return matching;
+    return result;
   }
 
   // useful for visualizing while debugging
