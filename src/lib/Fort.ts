@@ -1,96 +1,98 @@
-import type { CardType, FortCard } from "./Card";
-import type { FortGridSpec, FortGrid } from "./FortGrid";
-import type { CardEffect, CubeColor } from "../types";
-import { Building } from "./Building";
+import type { CardType, FortCard } from './Card'
+import { FortGridSpec, FortGrid } from './FortGrid'
+import type { Effect } from './Effect'
+import { Building } from './Building'
+import type { Player } from '../types'
 
 export class Fort implements FortCard {
-  id: string;
-  type: CardType = "fort";
-  name: string;
-  description: string;
-  gridSpec: FortGridSpec;
-  grid: FortGrid;
-  slots: number;
+  id: string
+  type: CardType = 'fort'
+  name: string
+  description: string
+  gridSpec: FortGridSpec
+  grid: FortGrid
+  slots: number
 
-  // Additional fields
-  openSlots: number;
-  usedSlots: number;
-  buildings: Building[] = [];
-  effect?: CardEffect;
+  openSlots: number = 0
+  usedSlots: number = 0
+  buildings: Building[] = []
+  effect?: Effect
 
-  constructor(data: FortCard, effect?: CardEffect) {
-    this.id = data.id;
-    this.name = data.name;
-    this.description = data.description;
-    this.gridSpec = data.gridSpec;
-    this.grid = createFortGrid(this.gridSpec);
-    this.slots = data.slots;
-    this.effect = effect;
+  constructor(data: FortCard, effect?: Effect) {
+    this.id = data.id
+    this.name = data.name
+    this.description = data.description
+    this.gridSpec = data.gridSpec
+    this.grid = new FortGrid(this.gridSpec)
+    this.slots = data.slots
+    this.effect = effect
 
-    this.openSlots = this.slots;
-    this.usedSlots = 0;
+    this.openSlots = this.slots
+    this.usedSlots = 0
   }
 
-  addBuilding(building: Building): void {
-    this.buildings.push(building);
-    building.fort = this;
-    building.applyRepair();
+  buildCubes(buildSpec: FortGridSpec): void {
+    this.grid.buildSpec(buildSpec)
+  }
+  // Forts and Buildings are inherently linked
+  addBuilding(building: Building, repairAt?: [number, number]): void {
+    if (this.usedSlots < building.cost) {
+      throw new Error(
+        `Attempting to build ${building.id} (requires ${building.cost}) but ${this.id} only has ${this.colonists}`,
+      )
+    }
+    this.buildings.push(building)
+    building.fort = this
+    // move colonists from here to there
+    this.usedSlots -= building.cost
+    building.colonists += building.cost
+
+    if (repairAt) {
+      const spec: FortGridSpec = [
+        [repairAt[0], repairAt[1], building.repairColor],
+      ]
+      this.grid.buildSpec(spec)
+    }
+  }
+
+  removeBuilding(building: Building, player?: Player): void {
+    const index = this.buildings.indexOf(building)
+    if (index === -1) {
+      throw new Error(`Building not found in fort ${this.id}`)
+    }
+
+    this.buildings.splice(index, 1)
+    building.destroy(player)
+  }
+
+  destroy(player?: Player): void {
+    ;[...this.buildings].forEach(b => this.removeBuilding(b, player))
+    if (player) {
+      player.returnColonists(this.usedSlots)
+    }
   }
 
   placeColonist(): boolean {
     if (this.openSlots > 0) {
-      this.usedSlots++;
-      this.openSlots--;
-      return true;
+      this.usedSlots++
+      this.openSlots--
+      return true
     }
-    return false;
+    return false
   }
 
   removeColonist(): boolean {
     if (this.usedSlots > 0) {
-      this.usedSlots--;
-      this.openSlots++;
-      return true;
+      this.usedSlots--
+      this.openSlots++
+      return true
     }
-    return false;
+    return false
   }
 
   get colonists(): number {
     return (
       this.buildings.reduce((sum, b) => sum + b.colonists, 0) + this.usedSlots
-    );
-  }
-}
-
-export function createFortGrid(gridSpec: FortGridSpec): FortGrid {
-  const size = 4;
-  const grid: FortGrid = Array.from({ length: size }, () =>
-    Array.from({ length: size }, () => ({ type: "NaC" })),
-  );
-
-  for (const [row, col, val] of gridSpec) {
-    if (row >= size || col >= size) {
-      throw new Error(`Invalid grid position: (${row}, ${col})`);
-    }
-
-    grid[row][col] = {
-      type: "cube",
-      color: val === "." ? null : cubeSymbolToColor(val),
-    };
-  }
-
-  return grid;
-}
-
-function cubeSymbolToColor(symbol: string): CubeColor {
-  switch (symbol) {
-    case "B":
-      return "black";
-    case "W":
-      return "white";
-    case "G":
-      return "gray";
-    default:
-      throw new Error(`Unknown cube symbol: ${symbol}`);
+    )
   }
 }
