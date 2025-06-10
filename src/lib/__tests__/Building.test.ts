@@ -20,12 +20,12 @@ describe('Building Class', () => {
     expect(building.coins).toBe(mockBuildingCard.coins)
     expect(building.colonists).toBe(0)
     expect(building.repairColor).toBe(mockBuildingCard.repairColor)
-    expect(building.effect).toBeUndefined() // No effect provided initially
+    expect(building.effect).toBeUndefined()
   })
 
   test('should remove colonists correctly', () => {
-    building.placeColonists(3);
-    expect(building.colonists).toBe(3);
+    building.placeColonists(3)
+    expect(building.colonists).toBe(3)
     expect(building.removeColonists(2)).toBe(true)
     expect(building.colonists).toBe(1)
 

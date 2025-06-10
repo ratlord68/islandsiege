@@ -1,24 +1,24 @@
 export const ActionTypes = {
   // Game Setup
-  INIT_GAME: "INIT_GAME",
-  RESET_GAME: "RESET_GAME",
+  INIT_GAME: 'INIT_GAME',
+  RESET_GAME: 'RESET_GAME',
   // Automatic Phases
-  VICTORY_PHASE: "VICTORY_PHASE",
-  COLONIST_PHASE: "COLONIST_PHASE",
-  INIT_DRAW: "INIT_DRAW",
-  ACTION_PHASE: "ACTION_PHASE",
+  VICTORY_PHASE: 'VICTORY_PHASE',
+  COLONIST_PHASE: 'COLONIST_PHASE',
+  INIT_DRAW: 'INIT_DRAW',
+  ACTION_PHASE: 'ACTION_PHASE',
   // Sub-actions
-  DRAW_CARDS: "DRAW_CARDS",
-  PLAY_FORT: "PLAY_FORT",
-  PLAY_BUILDING: "PLAY_BUILDING",
-  PLAY_SHIP: "PLAY_SHIP",
-  ATTACK_WAVE1: "ATTACK_WAVE1",
-  ATTACK_WAVE2: "ATTACK_WAVE2",
-  ATTACK_REINFORCE: "ATTACK_REINFORCE",
+  DRAW_CARDS: 'DRAW_CARDS',
+  PLAY_FORT: 'PLAY_FORT',
+  PLAY_BUILDING: 'PLAY_BUILDING',
+  PLAY_SHIP: 'PLAY_SHIP',
+  ATTACK_WAVE1: 'ATTACK_WAVE1',
+  ATTACK_WAVE2: 'ATTACK_WAVE2',
+  ATTACK_REINFORCE: 'ATTACK_REINFORCE',
 
   // Post-Action Phase
-  END_TURN: "END_TURN",
-} as const;
+  END_TURN: 'END_TURN',
+} as const
 
 // Game Phases
 // Victory - check if player has 0 colonists or >20 gold
@@ -38,4 +38,4 @@ export const ActionTypes = {
 //          5d2. Second Wave - resolve red
 //      5e. Destruction - If no cubes left, destroy fort and buildings, return colonists
 
-export type ActionType = (typeof ActionTypes)[keyof typeof ActionTypes];
+export type ActionType = (typeof ActionTypes)[keyof typeof ActionTypes]

@@ -1,6 +1,4 @@
-import type { Card, Game, Player } from "../types";
-
-import cards from "../assets/cards.json";
+// import type { Game, Player } from '../types'
 
 // function addStartingFort(player: Player) {
 //     const startingFort = allCards.find(card => card.name === "Starting Fort");

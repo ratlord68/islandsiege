@@ -1,7 +1,7 @@
 import type { CardType, BuildingCard } from './Card'
 import { Fort } from './Fort'
 import type { CubeColor } from './colors'
-import type { Player } from '../types'
+import type { Player } from './Player'
 import type { Effect } from './Effect'
 
 export class Building implements BuildingCard {

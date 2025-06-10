@@ -2,7 +2,7 @@ import type { CardType, FortCard } from './Card'
 import { FortGridSpec, FortGrid } from './FortGrid'
 import type { Effect } from './Effect'
 import { Building } from './Building'
-import type { Player } from '../types'
+import type { Player } from './Player'
 import { colorToSymbol } from './colors'
 
 export class Fort implements FortCard {

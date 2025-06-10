@@ -1,18 +1,6 @@
-export type Player = {
-  id: string
-  name: string
-  coins: number
-  hand: Card[]
-  buildings: Building[]
-  forts: Fort[]
-  ships: Ship[]
-  colonists: number // remaining colonists on player board
-  cubes: CubeReserve // personal cube supply
-
-  // TODO: extra actions unlocked with colonists?
-  attack_dice: number
-  rerolls: number
-}
+import type { Player } from 'lib/Player'
+import type { Deck } from 'lib/Deck'
+import type { CubeColor } from 'lib/colors'
 
 export type Phase =
   | 'initGame'
@@ -37,14 +25,8 @@ export type GameState = {
   currentPlayer: Player
 
   // ordered bottom -> top
-  deck: Card[]
-  discardPile: Card[]
+  deck: Deck
   phase: Phase
 }
 
-// Establish one for each player, and one general
-export type CubeReserve = {
-  black?: number
-  white?: number
-  gray?: number
-}
+export type CubeReserve = Record<CubeColor, number>
