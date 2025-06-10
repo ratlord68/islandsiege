@@ -38,7 +38,7 @@ export class Fort implements FortCard {
   addBuilding(building: Building, repairAt?: [number, number]): void {
     if (this.usedSlots < building.cost) {
       throw new Error(
-        `Attempting to build ${building.id} (requires ${building.cost}) but ${this.id} only has ${this.colonists}`,
+        `Attempting to build ${building.id} (requires ${building.cost}) but ${this.id} only has ${this.usedSlots}`,
       )
     }
     this.buildings.push(building)
@@ -72,22 +72,22 @@ export class Fort implements FortCard {
     }
   }
 
-  placeColonist(): boolean {
-    if (this.openSlots > 0) {
-      this.usedSlots++
-      this.openSlots--
-      return true
+  placeColonists(count: number = 1): boolean {
+    if (count > this.openSlots || this.usedSlots + count > this.slots) {
+      return false
     }
-    return false
+    this.usedSlots += count
+    this.openSlots -= count
+    return true
   }
 
-  removeColonist(): boolean {
-    if (this.usedSlots > 0) {
-      this.usedSlots--
-      this.openSlots++
-      return true
+  removeColonists(count: number = 1): boolean {
+    if (count > this.usedSlots) {
+      return false
     }
-    return false
+    this.usedSlots -= count
+    this.openSlots += count
+    return true
   }
 
   get colonists(): number {

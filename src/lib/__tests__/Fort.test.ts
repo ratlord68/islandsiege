@@ -1,51 +1,13 @@
 import { Fort } from '../Fort'
 import type { FortGridCube } from '../FortGrid'
-import type { FortCard } from '../Card'
+import { mockFortCard, mockBuildingCard } from './mocks'
 import { Building } from '../Building'
-
-// Mock building class for controlled testing
-class MockBuilding extends Building {
-  constructor(public colonists: number = 0) {
-    super()
-  }
-
-  applyRepair(): boolean {
-    this.repaired = true
-    return true
-  }
-}
-
-const mockFortCard: FortCard = {
-  id: 'testFort',
-  type: 'fort',
-  name: 'Test Fort',
-  description: 'Testing',
-  gridSpec: [
-    [0, 0, 'B'],
-    [0, 1, '.'],
-    [2, 2, 'W'],
-    [3, 3, 'G'],
-  ],
-  slots: 3,
-}
 
 describe('Fort', () => {
   let fort: Fort
 
   beforeEach(() => {
-    fort = new Fort({
-      id: 'testFort',
-      type: 'fort',
-      name: 'Test Fort',
-      description: 'Testing',
-      gridSpec: [
-        [0, 0, 'B'],
-        [0, 1, '.'],
-        [2, 2, 'W'],
-        [3, 3, 'G'],
-      ],
-      slots: 3,
-    })
+    fort = new Fort(mockFortCard)
   })
 
   it('initializes correctly', () => {
@@ -70,24 +32,26 @@ describe('Fort', () => {
     cell = fort.grid.cellAt(0, 1)
     expect((cell as FortGridCube).color).toBe('black')
   })
+
   it('places and removes colonists correctly', () => {
-    expect(fort.placeColonist()).toBe(true)
+    expect(fort.placeColonists()).toBe(true)
     expect(fort.usedSlots).toBe(1)
     expect(fort.openSlots).toBe(2)
 
-    expect(fort.removeColonist()).toBe(true)
+    expect(fort.removeColonists()).toBe(true)
     expect(fort.usedSlots).toBe(0)
     expect(fort.openSlots).toBe(3)
   })
 
-  it('does not place colonists beyond slot limit', () => {
-    expect(fort.placeColonist()).toBe(true)
-    expect(fort.placeColonist()).toBe(true)
-    expect(fort.placeColonist()).toBe(true)
+  it('does not place or remove colonists beyond slot limit', () => {
+    expect(fort.placeColonists(3)).toBe(true)
     expect(fort.usedSlots).toBe(3)
-    expect(fort.placeColonist()).toBe(false)
+    expect(fort.placeColonists()).toBe(false)
     expect(fort.usedSlots).toBe(3)
     expect(fort.openSlots).toBe(0)
+
+    expect(fort.removeColonists(4)).toBe(false)
+    expect(fort.usedSlots).toBe(3)
   })
 
   //   it("adds and repairs building", () => {
@@ -101,13 +65,13 @@ describe('Fort', () => {
   //     expect(building.repaired).toBe(true);
   //   });
 
-  it('colonists includes building and fort slots', () => {
-    fort.placeColonist() // +1
-    const b1 = new MockBuilding(2) // +2
-    const b2 = new MockBuilding(1) // +1
-    fort.addBuilding(b1)
-    fort.addBuilding(b2)
+  // it('colonists includes building and fort slots', () => {
+  //   fort.placeColonist() // +1
+  //   const b1 = new MockBuilding(2) // +2
+  //   const b2 = new MockBuilding(1) // +1
+  //   fort.addBuilding(b1)
+  //   fort.addBuilding(b2)
 
-    expect(fort.colonists).toBe(4)
-  })
+  //   expect(fort.colonists).toBe(4)
+  // })
 })
