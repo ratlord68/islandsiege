@@ -27,6 +27,11 @@ export class Building implements BuildingCard {
     this.effect = effect
   }
 
+  placeColonists(count: number = 1): boolean {
+    this.colonists += count
+    return true // no max for buildings
+  }
+
   removeColonists(count: number = 1, player?: Player): boolean {
     if (count > this.colonists) {
       return false

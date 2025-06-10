@@ -3,6 +3,7 @@ import { FortGridSpec, FortGrid } from './FortGrid'
 import type { Effect } from './Effect'
 import { Building } from './Building'
 import type { Player } from '../types'
+import { colorToSymbol } from './colors'
 
 export class Fort implements FortCard {
   id: string
@@ -44,13 +45,12 @@ export class Fort implements FortCard {
     this.buildings.push(building)
     building.fort = this
     // move colonists from here to there
-    this.usedSlots -= building.cost
-    building.colonists += building.cost
+    building.placeColonists(building.cost)
+    this.removeColonists(building.cost)
 
     if (repairAt) {
-      const spec: FortGridSpec = [
-        [repairAt[0], repairAt[1], building.repairColor],
-      ]
+      const color = colorToSymbol(building.repairColor)
+      const spec: FortGridSpec = [[repairAt[0], repairAt[1], color]]
       this.grid.buildSpec(spec)
     }
   }

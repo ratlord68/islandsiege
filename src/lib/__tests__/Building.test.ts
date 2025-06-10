@@ -1,8 +1,9 @@
 import { Building } from '../Building'
 
 import { Fort } from '../Fort'
-import { mockBuildingCard, mockFortCard } from './mocks'
+import { createMockBuildingCard, createMockFortCard } from '../__mocks__'
 
+const mockBuildingCard = createMockBuildingCard()
 // Test suite for Building class
 describe('Building Class', () => {
   let building: Building
@@ -23,7 +24,8 @@ describe('Building Class', () => {
   })
 
   test('should remove colonists correctly', () => {
-    building.colonists = 3
+    building.placeColonists(3);
+    expect(building.colonists).toBe(3);
     expect(building.removeColonists(2)).toBe(true)
     expect(building.colonists).toBe(1)
 
@@ -31,7 +33,7 @@ describe('Building Class', () => {
     expect(building.colonists).toBe(1)
   })
   test('should destroy the building correctly', () => {
-    const fort = new Fort(mockFortCard)
+    const fort = new Fort(createMockFortCard())
     building.fort = fort
     expect(building.fort).toBe(fort)
     building.destroy()
