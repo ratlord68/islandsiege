@@ -4,18 +4,7 @@ import type { Ship } from './Ship'
 import type { Building } from './Building'
 import type { Card } from './Card'
 
-export interface PlayerInt {
-  readonly id: string
-  readonly name: string
-
-  coins: number
-  hand: Card[]
-  buildings: Building[]
-  forts: Fort[]
-  ships: Ship[]
-}
-
-export class Player implements PlayerInt {
+export class Player {
   readonly id: string
   readonly name: string
 

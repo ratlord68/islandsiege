@@ -7,7 +7,7 @@ describe('createPlayer', () => {
   })
   it('creates a player with default values', () => {
     expect(p1.id).toBe('p1')
-    expect(p1.name).toBe('foo')
+    expect(p1.name).toBe('Jack Sparrow')
     expect(p1.coins).toBe(0)
     expect(p1.hand).toEqual([])
     expect(p1.buildings).toEqual([])
