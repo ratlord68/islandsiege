@@ -11,7 +11,7 @@ export class Fort implements FortCard {
   name: string
   description: string
   gridSpec: FortGridSpec
-  grid: FortGrid
+  grid!: FortGrid
   slots: number
 
   openSlots: number = 0
@@ -24,12 +24,19 @@ export class Fort implements FortCard {
     this.name = data.name
     this.description = data.description
     this.gridSpec = data.gridSpec
-    this.grid = new FortGrid(this.gridSpec)
     this.slots = data.slots
     this.effect = effect
 
     this.openSlots = this.slots
     this.usedSlots = 0
+    this.initializeGrid()
+  }
+
+  private initializeGrid(): void {
+    if (this.grid) {
+      throw new Error('Grid has already been initialized')
+    }
+    this.grid = new FortGrid(this.gridSpec)
   }
 
   buildCubes(buildSpec: FortGridSpec): void {
