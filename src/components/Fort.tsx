@@ -1,33 +1,32 @@
-import React from "react";
-import type { FortGridCell } from "../types";
-import { CubeColors } from "../colors";
+import React from 'react'
+import type { FortGridCell } from '../lib/FortGrid'
+import { CubeColors } from '../lib/colors'
 
 type FortGridProps = {
-  grid: FortGridCell[][];
-  view: "hand" | "tableau";
-  showLabels?: boolean;
-};
+  grid: FortGridCell[][]
+  view: 'hand' | 'tableau'
+  showLabels?: boolean
+}
 
 export const FortGrid: React.FC<FortGridProps> = ({ grid, view }) => {
   return (
     <div className="inline-block">
       <div
         className="grid gap-1"
-        style={{ gridTemplateColumns: `repeat(${grid[0].length}, 24px)` }}
-      >
+        style={{ gridTemplateColumns: `repeat(${grid[0].length}, 24px)` }}>
         {grid.flatMap((row, rowIndex) =>
           row.map((cell, colIndex) => {
-            let bgColor = "transparent";
-            let border = "1px solid #ccc";
+            let bgColor = 'transparent'
+            let border = '1px solid #ccc'
 
-            if (cell.type === "cube") {
-              if (view === "hand") {
-                bgColor = cell.color ? CubeColors[cell.color] : "#f5f5f5"; // empty = light gray
-              } else if (view === "tableau") {
-                bgColor = cell.color ? CubeColors[cell.color] : "#fff"; // TODO: Empty cell color
+            if (cell.type === 'cube') {
+              if (view === 'hand') {
+                bgColor = cell.color ? CubeColors[cell.color] : '#f5f5f5' // empty = light gray
+              } else if (view === 'tableau') {
+                bgColor = cell.color ? CubeColors[cell.color] : '#fff' // TODO: Empty cell color
               }
             } else {
-              border = "none";
+              border = 'none'
             }
 
             return (
@@ -40,10 +39,10 @@ export const FortGrid: React.FC<FortGridProps> = ({ grid, view }) => {
                 }}
                 title={`${rowIndex},${colIndex}`}
               />
-            );
+            )
           }),
         )}
       </div>
     </div>
-  );
-};
+  )
+}

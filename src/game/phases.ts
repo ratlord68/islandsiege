@@ -1,26 +1,26 @@
-import type { GameState } from "../types";
+import type { GameState } from '../types'
 
 export const GamePhases = {
   // Game Setup
-  INIT_GAME: "INIT_GAME",
-  RESET_GAME: "RESET_GAME",
+  INIT_GAME: 'INIT_GAME',
+  RESET_GAME: 'RESET_GAME',
   // Automatic Phases
-  VICTORY_PHASE: "VICTORY_PHASE",
-  COLONIST_PHASE: "COLONIST_PHASE",
-  INIT_DRAW: "INIT_DRAW",
-  ACTION_PHASE: "ACTION_PHASE",
+  VICTORY_PHASE: 'VICTORY_PHASE',
+  COLONIST_PHASE: 'COLONIST_PHASE',
+  INIT_DRAW: 'INIT_DRAW',
+  ACTION_PHASE: 'ACTION_PHASE',
   // Sub-actions
-  DRAW_CARDS: "DRAW_CARDS",
-  PLAY_FORT: "PLAY_FORT",
-  PLAY_BUILDING: "PLAY_BUILDING",
-  PLAY_SHIP: "PLAY_SHIP",
-  ATTACK_WAVE1: "ATTACK_WAVE1",
-  ATTACK_WAVE2: "ATTACK_WAVE2",
-  ATTACK_REINFORCE: "ATTACK_REINFORCE",
+  DRAW_CARDS: 'DRAW_CARDS',
+  PLAY_FORT: 'PLAY_FORT',
+  PLAY_BUILDING: 'PLAY_BUILDING',
+  PLAY_SHIP: 'PLAY_SHIP',
+  ATTACK_WAVE1: 'ATTACK_WAVE1',
+  ATTACK_WAVE2: 'ATTACK_WAVE2',
+  ATTACK_REINFORCE: 'ATTACK_REINFORCE',
 
   // Post-Action Phase
-  END_TURN: "END_TURN",
-};
+  END_TURN: 'END_TURN',
+}
 
 // function advancePhase(state: GameState): GameState {
 //   switch (state.phase) {

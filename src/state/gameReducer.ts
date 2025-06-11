@@ -1,13 +1,14 @@
-import { GameState, Player } from "../types";
-import { ActionTypes } from "./actions";
+import type { GameState } from '../types'
+import type { Player } from 'lib/Player'
+import type { ActionTypes } from './actions'
 
 type Action =
-  | { type: "INIT_GAME"; payload: { names: string[] } }
-  | { type: "COLONIST_PHASE" }
-  | { type: "ACTION_PHASE" }
-  | { type: "ATTACK" }
-  | { type: "NEXT_TURN" }
-  | { type: "CHECK_WIN" };
+  | { type: 'INIT_GAME'; payload: { names: string[] } }
+  | { type: 'COLONIST_PHASE' }
+  | { type: 'ACTION_PHASE' }
+  | { type: 'ATTACK' }
+  | { type: 'NEXT_TURN' }
+  | { type: 'CHECK_WIN' }
 
 // export const gameReducer = (state: GameState, action: Action): GameState => {
 //   const currentPlayer = state.currentPlayer;
