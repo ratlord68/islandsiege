@@ -1,7 +1,6 @@
 import React from 'react'
-import type { FortGridCell } from '../lib/FortGrid'
-import { CubeColors } from '../lib/colors'
 import { Fort as FortModel } from '../lib/Fort'
+import FortGrid from './FortGrid'
 
 interface FortProps {
   fort: FortModel
@@ -14,14 +13,50 @@ const Fort: React.FC<FortProps> = ({ fort }) => (
       borderRadius: 6,
       padding: 8,
       marginBottom: 8,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
     }}>
     <strong>{fort.name}</strong>
-    <div>Description: {fort.description}</div>
-    <div>Slots: {fort.slots}</div>
+    <div
+      style={{
+        whiteSpace: 'pre-line',
+        wordBreak: 'break-word',
+        fontFamily: 'Georgia, serif',
+        fontSize: 13,
+        color: '#555',
+        marginBottom: 6,
+        textAlign: 'center',
+        maxWidth: 220,
+      }}>
+      {fort.description}
+    </div>
     <div style={{ margin: '8px 0' }}>
       <FortGrid grid={fort.grid.allCells} view="tableau" showLabels={false} />
     </div>
-    <div>Colonists: {fort.colonists}</div>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        gap: 8,
+        marginTop: 8,
+      }}>
+      {Array.from({ length: fort.slots }).map((_, i) => (
+        <div
+          key={i}
+          style={{
+            width: 18,
+            height: 18,
+            borderRadius: '50%',
+            border: '2px solid #888',
+            background: i < fort.usedSlots ? '#f1c40f' : '#fff',
+            boxSizing: 'border-box',
+            transition: 'background 0.2s',
+          }}
+          title={i < fort.usedSlots ? 'Occupied' : 'Empty'}
+        />
+      ))}
+    </div>
     {fort.buildings && fort.buildings.length > 0 && (
       <div style={{ marginTop: 8 }}>
         <em>Buildings in Fort:</em>
@@ -36,57 +71,3 @@ const Fort: React.FC<FortProps> = ({ fort }) => (
 )
 
 export default Fort
-
-function getCellLabel(cell: FortGridCell, row: number, col: number) {
-  if (cell.type === 'cube' && cell.color) return cell.color[0].toUpperCase()
-  return ''
-}
-
-export const FortGrid: React.FC<{
-  grid: FortGridCell[][]
-  view: 'hand' | 'tableau'
-  showLabels?: boolean
-}> = ({ grid, view, showLabels }) => {
-  return (
-    <div style={{ display: 'inline-block' }}>
-      <div
-        style={{
-          display: 'grid',
-          gap: 2,
-          gridTemplateColumns: `repeat(${grid[0].length}, 24px)`,
-        }}>
-        {grid.map((row, rowIndex) =>
-          row.map((cell, colIndex) => {
-            let bgColor = '#0059b3' // sea water
-            let border = '1px solid #ccc'
-            if (cell.type === 'cube') {
-              if (view === 'hand') {
-                bgColor = cell.color ? CubeColors[cell.color] : '#f5f5f5'
-              } else if (view === 'tableau') {
-                bgColor = cell.color ? CubeColors[cell.color] : '#fff'
-              }
-            }
-            return (
-              <div
-                key={`${rowIndex}-${colIndex}`}
-                style={{
-                  width: 24,
-                  height: 24,
-                  backgroundColor: bgColor,
-                  border,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 12,
-                  color: '#222',
-                }}
-                title={`${rowIndex},${colIndex}`}>
-                {showLabels ? getCellLabel(cell, rowIndex, colIndex) : null}
-              </div>
-            )
-          }),
-        )}
-      </div>
-    </div>
-  )
-}
