@@ -8,12 +8,14 @@ interface PlayerPanelProps {
   player: Player
   onMoveColonist: () => void
   onDestroyFort: (fortIndex: number) => void
+  color?: string
 }
 
 const PlayerPanel: React.FC<PlayerPanelProps> = ({
   player,
   onMoveColonist,
   onDestroyFort,
+  color,
 }) => {
   return (
     <div
@@ -23,7 +25,7 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({
         padding: 16,
         minWidth: 320,
       }}>
-      <h2>{player.name}</h2>
+      <h2 style={{ color }}>{player.name}</h2>
       <p>ID: {player.id}</p>
       <p>Colonists: {player.colonists}</p>
       <p>Coins: {player.coins}</p>
