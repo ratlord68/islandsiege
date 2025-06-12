@@ -4,6 +4,8 @@ import { Player } from '../lib/Player'
 import GameSetup from './GameSetup'
 import { StartingFort } from '../lib/forts/StartingFort'
 
+const PLAYER_COLORS = ['#1e90ff', '#e67e22', '#27ae60', '#8e44ad']
+
 const GameBoard: React.FC = () => {
   const [players, setPlayers] = useState<Player[] | null>(() => {
     const cached = window.sessionStorage.getItem('players')
@@ -85,6 +87,7 @@ const GameBoard: React.FC = () => {
             player={player}
             onMoveColonist={() => moveColonists(idx)}
             onDestroyFort={fortIdx => destroyFort(idx, fortIdx)}
+            color={PLAYER_COLORS[idx % PLAYER_COLORS.length]}
           />
         ))}
       </div>

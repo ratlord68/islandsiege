@@ -57,7 +57,7 @@ export const FortGrid: React.FC<{
         }}>
         {grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
-            let bgColor = 'transparent'
+            let bgColor = '#0059b3' // sea water
             let border = '1px solid #ccc'
             if (cell.type === 'cube') {
               if (view === 'hand') {
@@ -65,8 +65,6 @@ export const FortGrid: React.FC<{
               } else if (view === 'tableau') {
                 bgColor = cell.color ? CubeColors[cell.color] : '#fff'
               }
-            } else {
-              border = 'none'
             }
             return (
               <div
