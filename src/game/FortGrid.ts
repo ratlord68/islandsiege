@@ -1,4 +1,4 @@
-import { CubeColor, cubeSymbolToColor, colorToSymbol } from './colors'
+import { CubeColor, cubeSymbolToColor, colorToSymbol } from '../common/colors'
 
 export type FortGridNaC = { type: 'NaC' }
 export type FortGridCube = { type: 'cube'; color: CubeColor | null }

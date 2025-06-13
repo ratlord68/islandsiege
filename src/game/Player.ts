@@ -37,6 +37,14 @@ export class Player {
     this.colonists += count
   }
 
+  placeColonists(fort: Fort): void {
+    const placed = fort.placeColonists()
+    if (!placed) {
+      return
+    }
+    this.colonists -= 1
+  }
+
   spendColonists(count: number) {
     if (this.colonists < count) {
       throw new Error(
