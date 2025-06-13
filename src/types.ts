@@ -1,19 +1,7 @@
 import type { Player } from 'lib/Player'
 import type { Deck } from 'lib/Deck'
 import type { CubeColor } from 'lib/colors'
-
-export type Phase =
-  | 'initGame'
-  | 'initDraw'
-  | 'victory'
-  | 'colonist'
-  | 'action'
-  | 'draw'
-  | 'build'
-  | 'attack'
-  | 'reroll'
-  | 'endTurn'
-  | 'gameEnd'
+import type { Phase } from 'common/phases'
 
 export type Game = {
   id: string
@@ -22,11 +10,12 @@ export type Game = {
 
 export type GameState = {
   players: Player[]
-  currentPlayer: Player
+  currentPlayerIndex: number
 
   // ordered bottom -> top
   deck: Deck
   phase: Phase
+  generalCubeReserve: CubeReserve
 }
 
 export type CubeReserve = Record<CubeColor, number>
