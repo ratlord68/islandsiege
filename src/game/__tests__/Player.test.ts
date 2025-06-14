@@ -1,4 +1,6 @@
 import { Player } from '../Player'
+import { Fort } from '../Fort'
+import { createMockFortCard } from 'game/__mocks__'
 
 describe('createPlayer', () => {
   let p1: Player
@@ -18,14 +20,31 @@ describe('createPlayer', () => {
     expect(p1.attack_dice).toBe(2)
     expect(p1.rerolls).toBe(1)
   })
-
   it('respects overrides', () => {
-    const player = new Player('Blackbeard', 2, {
+    const p2 = new Player('Blackbeard', 2, {
       coins: 3,
       cubes: { black: 2 },
     })
-    expect(player.id).toBe('p2')
-    expect(player.coins).toBe(3)
-    expect(player.cubes).toEqual({ black: 2, gray: 0, white: 0 })
+    expect(p2.id).toBe('p2')
+    expect(p2.coins).toBe(3)
+    expect(p2.cubes).toEqual({ black: 2, gray: 0, white: 0 })
   })
+  it('contains forts and populates them', () => {
+    const fort1 = new Fort(createMockFortCard())
+    const fort2 = new Fort(createMockFortCard({ id: 'fort2' }))
+    p1.addFort(fort1)
+    p1.addFort(fort2)
+    expect(p1.colonists).toBe(9)
+    p1.populateForts()
+    expect(p1.colonists).toBe(7)
+    p1.colonists = 1
+    expect(fort1.colonists).toBe(1)
+    expect(fort2.colonists).toBe(1)
+    p1.populateForts()
+    expect(p1.colonists).toBe(0)
+    expect(fort1.colonists).toBe(2)
+    expect(fort2.colonists).toBe(1)
+  })
+  // it('stores cards in hand and can remove them', () => {
+  // })
 })

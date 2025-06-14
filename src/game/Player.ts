@@ -33,16 +33,27 @@ export class Player {
     }
   }
 
+  removeCardInHand(cardID: string): Card | undefined {
+    const cardIdx = this.hand.findIndex((c: Card) => c.id === cardID)
+    if (cardIdx === -1) return undefined
+    const [card] = this.hand.splice(cardIdx, 1)
+    return card
+  }
+
   returnColonists(count: number) {
     this.colonists += count
   }
 
-  placeColonists(fort: Fort): void {
-    const placed = fort.placeColonists()
-    if (!placed) {
-      return
-    }
-    this.colonists -= 1
+  populateForts(): void {
+    this.forts.forEach((f: Fort) => {
+      if (this.colonists <= 0) {
+        return
+      }
+      const placed = f.placeColonists()
+      if (placed) {
+        this.colonists -= 1
+      }
+    })
   }
 
   spendColonists(count: number) {
