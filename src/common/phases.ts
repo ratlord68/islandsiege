@@ -25,14 +25,17 @@ export type Phase =
   | 'draw'
   | 'giveCard'
   | 'buildFort'
+  | 'addFortCubes'
   | 'buildBuilding'
   | 'buildShip'
+  | 'attackTarget'
   | 'attackRoll'
   | 'attackLeadership'
   | 'attackWave1'
   | 'attackReinforce'
   | 'attackWave2'
   | 'endTurn'
+  | 'gameOver'
 
 export const GamePhases = {
   // Game Setup
@@ -46,8 +49,10 @@ export const GamePhases = {
   draw: 'draw',
   giveCard: 'giveCard',
   buildFort: 'buildFort',
+  addFortCubes: 'addFortCubes',
   buildBuilding: 'buildBuilding',
   buildShip: 'buildShip',
+  attackTarget: 'attackTarget',
   attackRoll: 'attackRoll',
   attackLeadership: 'attackLeadership',
   attackWave1: 'attackWave1',
@@ -55,24 +60,21 @@ export const GamePhases = {
   attackWave2: 'attackWave2',
   // Post-Action Phase
   endTurn: 'endTurn',
+  gameOver: 'gameOver',
 } as const
 
 export type Action = (typeof GamePhases)[keyof typeof GamePhases]
 
 export const initGame = (playerNames: string[]) => ({
-  type: GamePhases.INIT_GAME,
+  type: GamePhases.initGame,
   payload: { playerNames },
 })
 
 export const drawCards = () => ({
-  type: GamePhases.DRAW,
+  type: GamePhases.draw,
 })
 
-export const giveCard = (
-  fromPlayerIndex: number,
-  toPlayerIndex: number,
-  cardId: string,
-) => ({
-  type: GamePhases.GIVE_CARD,
-  payload: { fromPlayerIndex, toPlayerIndex, cardId },
+export const giveCard = (toPlayerIndex: number, cardId: string) => ({
+  type: GamePhases.giveCard,
+  payload: { toPlayerIndex, cardId },
 })
