@@ -1,11 +1,13 @@
 import { Player } from './Player'
 import { Deck } from './Deck'
-import { Phase } from 'types'
+import { Phase } from '../common/phases'
 
 export type GameState = {
   players: Player[]
-  currentPlayer: Player
+  currentPlayerIndex: number
   deck: Deck
-  currentPhase: Phase
-  winner: Player | undefined
+  phase: Phase
+  initDrawComplete: boolean
+  gameOver: boolean
+  winningPlayerIndex: number
 }
