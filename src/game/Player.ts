@@ -69,6 +69,14 @@ export class Player {
     this.forts.push(fort)
   }
 
+  findFort(fortID: string): Fort {
+    const fort = this.forts.find(fort => fort.id === fortID)
+    if (!fort) {
+      throw new Error(`Player ${this.id} has no fort ${fortID}`)
+    }
+    return fort
+  }
+
   addBuilding(building: Building) {
     this.buildings.push(building)
   }
