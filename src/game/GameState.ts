@@ -4,10 +4,10 @@ import { Phase } from '../common/phases'
 
 export type GameState = {
   players: Player[]
-  currentPlayerIndex: number
+  currentPlayerIndex: number | undefined
   deck: Deck
   phase: Phase
   initDrawComplete: boolean
   gameOver: boolean
-  winningPlayerIndex: number
+  winningPlayerIndex: number | undefined
 }

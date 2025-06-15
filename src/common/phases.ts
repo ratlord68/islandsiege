@@ -28,7 +28,7 @@ export type Phase =
   | 'addFortCubes'
   | 'buildBuilding'
   | 'buildShip'
-  | 'attackTarget'
+  | 'attackStart'
   | 'attackRoll'
   | 'attackLeadership'
   | 'attackWave1'
@@ -52,7 +52,7 @@ export const GamePhases = {
   addFortCubes: 'addFortCubes',
   buildBuilding: 'buildBuilding',
   buildShip: 'buildShip',
-  attackTarget: 'attackTarget',
+  attackStart: 'attackStart',
   attackRoll: 'attackRoll',
   attackLeadership: 'attackLeadership',
   attackWave1: 'attackWave1',

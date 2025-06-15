@@ -18,20 +18,32 @@ export function gameReducer(
         ),
         phase: 'draw',
       }
-    // TODO: Either make separate Phase for initial draw
-    // or add some key (requires?) which won't advance until
-    // all players submit
+
     case GamePhases.draw: {
-      const updatedPlayers = state.players.map(player => {
-        const drawn = state.deck.draw(3)
-        return { ...player, hand: [...player.hand, ...drawn] }
-      })
+      let updatedPlayers
+      if (state.currentPlayerIndex === undefined) {
+        // Simultaneous: all players draw
+        updatedPlayers = state.players.map(player => {
+          const drawn = state.deck.draw(3)
+          return { ...player, hand: [...player.hand, ...drawn] }
+        })
+      } else {
+        // Only current player draws
+        updatedPlayers = state.players.map((player, idx) => {
+          if (idx === state.currentPlayerIndex) {
+            const drawn = state.deck.draw(3)
+            return { ...player, hand: [...player.hand, ...drawn] }
+          }
+          return player
+        })
+      }
       return {
         ...state,
+        deck: state.deck,
         phase: 'giveCard',
       }
     }
-    // TODO: Same as above
+
     case GamePhases.giveCard: {
       const { targetPlayerIndex, cardID } = phase.payload
 
@@ -170,12 +182,19 @@ export function gameReducer(
       const player = state.players[state.currentPlayerIndex]
 
       const ship = new Ship(shipCard)
-      const fort = player.findFort(fortID)
-      player.buildShip(fortID, ship) // not implemented
+      player.addShip(ship, fortID)
       state.players[state.currentPlayerIndex] = player
       return {
         ...state,
         phase: 'endTurn',
+      }
+    }
+
+    case GamePhases.attackStart: {
+      const { targetPlayerIndex } = phase.payload
+      const targetPlayer = state.players[targetPlayerIndex]
+      if (!targetPlayer.forts) {
+        // Check if can open water attack
       }
     }
 
