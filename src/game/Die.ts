@@ -9,7 +9,7 @@ export type DieValue = 'G' | 'W' | 'B' | 'L' | 'T'
 export const DEFAULT_DIE_FACE: DieValue = 'G'
 
 // Die probabilities
-const dieFaces: DieValue[] = ['G', 'G', 'W', 'B', 'L', 'T']
+export const dieFaces: DieValue[] = ['G', 'G', 'W', 'B', 'L', 'T']
 
 // Type used to accumulate statistics
 export type DieStatsAccumulator = {
@@ -70,8 +70,18 @@ export class Die {
   public value: DieValue = DEFAULT_DIE_FACE
   private reset: boolean = true // Die should be reset initially
   private countRolled: number = 0
-  private dieStatsAcc: DieStatsAccumulator[] = new Array(NUM_DIE_VALUES)
+  private dieStatsAcc: DieStatsAccumulator[] = Array.from(
+    new Array<DieStatsAccumulator>(NUM_DIE_VALUES),
+    (x, i) => this.initAccumulator(x, i),
+  )
 
+  initAccumulator(x: DieStatsAccumulator, i: number): DieStatsAccumulator {
+    var stat: DieStatsAccumulator = {
+      face: Object.keys(FaceConfig)[i] as DieValue,
+      timesRolled: 0,
+    }
+    return stat
+  }
   // Instantiates a new die from an existing one.
   // Used by react as each state object is immutable
   public static fromObject(die_: Die): Die {
@@ -88,7 +98,6 @@ export class Die {
     const i = Math.floor(Math.random() * dieFaces.length)
     this.countRolled++
     this.value = dieFaces[i]
-
     // Update statistics
     this.dieStatsAcc[Object.keys(FaceConfig).indexOf(this.value)].timesRolled +=
       1
