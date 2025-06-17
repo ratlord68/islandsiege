@@ -1,18 +1,23 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import {
+  DEFAULT_ROLL_LIMIT,
   Die,
+  DieValue,
   DieProps,
   DieStats,
   DieStatsAccumulator,
   FaceConfig,
 } from 'lib/Die'
 
-export default function GameDie(props: DieProps): React.ReactNode {
+export default function GameDie({
+  rollLimit = DEFAULT_ROLL_LIMIT,
+  sendValue = (value: DieValue) => {},
+}: DieProps): React.ReactNode {
   const [die, setDie] = useState(new Die()) // Die Object
   const [dieStats, setDieStats] = useState([] as DieStats[]) // Die statistics
   const [showStats, setShowStats] = useState(false) // Show statistics
   const [statsComputed, setStatsComputed] = useState(false) // If new stats have been computed
-  const updateDieCB = useCallback(updateDieObj, [die, props, updateDieObj]) // Prevent unecessary rerenders
+  const updateDieCB = useCallback(updateDieObj, [die, sendValue, updateDieObj]) // Prevent unecessary rerenders
   const computeStatsCB = useCallback(computeStats, [
     die.rollCount,
     computeStats,
@@ -55,7 +60,7 @@ export default function GameDie(props: DieProps): React.ReactNode {
   // Update die object, rerender, and send value to parent
   function updateDieObj() {
     setDie(Die.fromObject(die))
-    props.sendValue(die.value)
+    sendValue(die.value)
   }
 
   // Roll the die
@@ -155,9 +160,9 @@ export default function GameDie(props: DieProps): React.ReactNode {
       }}>
       <h1 style={{ textAlign: 'center' }}>{die.value}</h1>
       <p>
-        Rolls: {die.rollCount}/{props.rollLimit}
+        Rolls: {die.rollCount}/{rollLimit}
       </p>
-      {die.rollCount < props.rollLimit ? (
+      {die.rollCount < rollLimit ? (
         <button onClick={rollDie}>Roll!</button>
       ) : (
         <></>
