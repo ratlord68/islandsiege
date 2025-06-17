@@ -3,6 +3,7 @@
 // Die value constants
 export const NUM_DIE_VALUES: number = 5
 export const NUM_DIE_FACES: number = 6
+export const DEFAULT_ROLL_LIMIT: number = 6
 
 // Die faces
 export type DieValue = 'G' | 'W' | 'B' | 'L' | 'T'
