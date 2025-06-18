@@ -19,11 +19,13 @@
 export type Phase =
   | 'initGame'
   | 'resetGame'
+  | 'initDraw'
+  | 'initDiscard'
   | 'victory'
   | 'colonize'
   | 'action'
   | 'draw'
-  | 'giveCard'
+  | 'discard'
   | 'buildFort'
   | 'addFortCubes'
   | 'buildBuilding'
@@ -32,8 +34,10 @@ export type Phase =
   | 'attackRoll'
   | 'attackLeadership'
   | 'attackWave1'
+  | 'attackReinforceOrWave2'
   | 'attackReinforce'
   | 'attackWave2'
+  | 'attackDestroy'
   | 'endTurn'
   | 'gameOver'
 
@@ -41,13 +45,15 @@ export const GamePhases = {
   // Game Setup
   initGame: 'initGame',
   resetGame: 'resetGame',
+  initDraw: 'initDraw',
+  initDiscard: 'initDiscard',
   // Automatic Phases
   victory: 'victory',
   colonize: 'colonize',
   action: 'action',
   // Sub-actions
   draw: 'draw',
-  giveCard: 'giveCard',
+  discard: 'discard',
   buildFort: 'buildFort',
   addFortCubes: 'addFortCubes',
   buildBuilding: 'buildBuilding',
@@ -56,8 +62,10 @@ export const GamePhases = {
   attackRoll: 'attackRoll',
   attackLeadership: 'attackLeadership',
   attackWave1: 'attackWave1',
+  attackReinforceOrWave2: 'attackReinforceOrWave2',
   attackReinforce: 'attackReinforce',
   attackWave2: 'attackWave2',
+  attackDestroy: 'attackDestroy',
   // Post-Action Phase
   endTurn: 'endTurn',
   gameOver: 'gameOver',
@@ -70,11 +78,20 @@ export const initGame = (playerNames: string[]) => ({
   payload: { playerNames },
 })
 
-export const drawCards = () => ({
+export const initDraw = () => ({
+  type: GamePhases.initDraw,
+})
+
+export const initDiscard = (targetPlayerIndex: number, cardID: string) => ({
+  type: GamePhases.initDiscard,
+  payload: { targetPlayerIndex, cardID },
+})
+
+export const draw = () => ({
   type: GamePhases.draw,
 })
 
-export const giveCard = (toPlayerIndex: number, cardId: string) => ({
-  type: GamePhases.giveCard,
-  payload: { toPlayerIndex, cardId },
+export const discard = (targetPlayerIndex: number, cardID: string) => ({
+  type: GamePhases.discard,
+  payload: { targetPlayerIndex, cardID },
 })

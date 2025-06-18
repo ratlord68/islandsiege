@@ -19,6 +19,7 @@ export class FortGrid {
   readonly size: number = FORT_GRID_SIZE
   private grid: FortGridCell[][]
   private cubeInfoCache: CubeInfo[] = []
+  hasShells: boolean = true
 
   constructor(gridSpec: FortGridSpec) {
     this.grid = Array.from({ length: this.size }, () =>
@@ -45,7 +46,7 @@ export class FortGrid {
         connectStrength: 0,
       })
     }
-    this.updateCubeInfo()
+    this.updateShellInfo()
   }
 
   get allCells(): FortGridCell[][] {
@@ -68,17 +69,21 @@ export class FortGrid {
     return this.grid[row]?.[col]
   }
 
-  private updateCubeInfo(): void {
+  private updateShellInfo(): void {
+    let hasShells = false
     for (const info of this.cubeInfoCache) {
       const { row, col } = info
       const cell = this.grid[row][col]
 
       if (cell.type !== 'cube') continue
-
+      if (cell.color) {
+        hasShells = true
+      }
       info.color = cell.color ?? null
       info.protectBonus = this.cellAtIsProtected(row, col)
       info.connectStrength = this.cellAtConnectedStrength(row, col)
     }
+    this.hasShells = hasShells // otherwise, slated for destruction
   }
 
   cellAtIsProtected(row: number, col: number): boolean {
@@ -104,7 +109,7 @@ export class FortGrid {
       cell.color = symbol === '.' ? null : cubeSymbolToColor(symbol)
       builds += 1
     }
-    this.updateCubeInfo()
+    this.updateShellInfo()
     return builds
   }
 
@@ -116,7 +121,7 @@ export class FortGrid {
       }
     })
 
-    this.updateCubeInfo()
+    this.updateShellInfo()
   }
 
   private traverseConnectedCubes(

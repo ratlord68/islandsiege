@@ -88,6 +88,10 @@ export class Fort implements FortCard {
     return true
   }
 
+  hasShells(): boolean {
+    return this.grid.hasShells
+  }
+
   removeColonists(count: number = 1): boolean {
     if (count > this.usedSlots) {
       return false

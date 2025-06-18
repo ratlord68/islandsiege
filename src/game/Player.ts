@@ -3,6 +3,7 @@ import type { Fort } from './Fort'
 import type { Ship } from './Ship'
 import type { Building } from './Building'
 import type { Card } from './Card'
+import { DieValue } from './Die'
 
 export class Player {
   static MAX_COLONISTS = 9
@@ -20,6 +21,9 @@ export class Player {
   attack_dice: number = 2
   rerolls: number = 1
 
+  attackRoll: DieValue[] = []
+  drawCache: Card[] = []
+
   constructor(name: string, idx: number, overrides: Partial<Player> = {}) {
     this.id = `p${idx}`
     this.name = name
@@ -34,9 +38,16 @@ export class Player {
     }
   }
 
-  removeCardInHand(cardID: string): Card | undefined {
+  addCardsToHand(cards: Card[]) {
+    this.drawCache = cards // tracker to help with discard
+    this.hand.push(...cards)
+  }
+
+  removeCardInHand(cardID: string): Card {
     const cardIdx = this.hand.findIndex((c: Card) => c.id === cardID)
-    if (cardIdx === -1) return undefined
+    if (cardIdx === -1) {
+      throw new Error(`Card ${cardID} not in hand`)
+    }
     const [card] = this.hand.splice(cardIdx, 1)
     return card
   }
@@ -93,6 +104,22 @@ export class Player {
 
   addBuilding(building: Building) {
     this.buildings.push(building)
+  }
+
+  destroyFort(fortID: string) {
+    const idx = this.forts.findIndex(f => f.id === fortID)
+    if (idx === -1) {
+      throw new Error(`Fort ${fortID} not found`)
+    }
+    const fort = this.forts[idx]
+    this.colonists += fort.colonists || 0
+    // remove fort, buildings
+    this.forts.splice(idx, 1)
+    this.buildings = this.buildings.filter(b => b.fort !== fort)
+  }
+
+  updateCubes(color: string, count: number): void {
+    this.cubes[color] += count
   }
 
   totalColonists(): number {

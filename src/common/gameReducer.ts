@@ -4,6 +4,7 @@ import { Building } from '../game/Building'
 import { Ship } from '../game/Ship'
 import { Player } from '../game/Player'
 import { GamePhases, Phase } from './phases'
+import { rollDice, rollSingleDie, reduceDice } from '../game/AttackRoll'
 
 export function gameReducer(
   state: GameState,
@@ -16,60 +17,90 @@ export function gameReducer(
         players: phase.payload.playerNames.map(
           (name: string, idx: number) => new Player(name, idx + 1),
         ),
-        phase: 'draw',
+        phase: 'initDraw',
       }
 
-    case GamePhases.draw: {
-      let updatedPlayers
-      if (state.currentPlayerIndex === undefined) {
-        // Simultaneous: all players draw
-        updatedPlayers = state.players.map(player => {
-          const drawn = state.deck.draw(3)
-          return { ...player, hand: [...player.hand, ...drawn] }
-        })
-      } else {
-        // Only current player draws
-        updatedPlayers = state.players.map((player, idx) => {
-          if (idx === state.currentPlayerIndex) {
-            const drawn = state.deck.draw(3)
-            return { ...player, hand: [...player.hand, ...drawn] }
-          }
-          return player
-        })
-      }
+    case GamePhases.initDraw: {
+      const cardsToDraw = 3
+      const deck = state.deck
+      const players = state.players
+
+      players.forEach(player => {
+        const drawn = deck.draw(cardsToDraw)
+        player.addCardsToHand(drawn)
+      })
+      state.players = players
+      state.deck = deck
+
       return {
         ...state,
-        deck: state.deck,
-        phase: 'giveCard',
+        phase: 'initDiscard',
       }
     }
 
-    case GamePhases.giveCard: {
-      const { targetPlayerIndex, cardID } = phase.payload
+    case GamePhases.initDiscard: {
+      const { playerIdx, cardID } = phase.payload
+      const pending = { ...state.pending, [playerIdx]: cardID }
 
-      const players = [...state.players]
-      const player = players[state.currentPlayerIndex]
-      const target = players[targetPlayerIndex]
-
-      const removedCard = player.removeCardInHand(cardID)
-      // TODO: Add case where card is discarded instead
-      target.hand = [...target.hand, removedCard]
-
-      // If this is the first time this phase is performed
-      // denote that draws will be synchronous from now on.
-      if (!state.initDrawComplete) {
-        state.initDrawComplete = true
+      if (Object.keys(pending).length < state.players.length) {
+        // not all players have selected a discard
+        return { ...state, pending }
       }
+
+      Object.entries(pending).forEach(([idxStr, cardID]) => {
+        const idx = parseInt(idxStr, 10)
+        const nextIdx = (idx + 1) % state.players.length
+        const player = state.players[idx]
+        const targetPlayer = state.players[nextIdx]
+
+        let discarded = player.removeCardInHand(cardID)
+        targetPlayer.hand.push(discarded)
+        player.drawCache = [] // reset for UI
+        state.players[idx] = player
+        state.players[nextIdx] = targetPlayer
+      })
       return {
         ...state,
-        phase: 'action', // or end turn
+        pending: {},
+        phase: 'action',
+      }
+    }
+
+    case GamePhases.draw: {
+      const cardsToDraw = 3
+      const player = state.players[state.currentPlayerIndex]
+      const drawn = state.deck.draw(cardsToDraw)
+      // TODO: Add some logging
+      player.addCardsToHand(drawn)
+      // not sure if this is required...
+      state.players[state.currentPlayerIndex] = player
+      return {
+        ...state,
+        phase: 'discard',
+      }
+    }
+
+    case GamePhases.discard: {
+      const { targetPlayerIndex, cardID } = phase.payload
+
+      const player = state.players[state.currentPlayerIndex]
+      const removedCard = player.removeCardInHand(cardID)
+      player.drawCache = []
+      // TODO: Handle case where card is not given
+      const target = state.players[targetPlayerIndex]
+      target.addCardsToHand([removedCard])
+
+      state.players[state.currentPlayerIndex] = player
+      state.players[targetPlayerIndex] = target
+      return {
+        ...state,
+        phase: 'endTurn',
       }
     }
 
     case GamePhases.victory: {
       const player = state.players[state.currentPlayerIndex]
       if (player.colonists <= 0) {
-        state.gameOver = true
         state.winningPlayerIndex = state.currentPlayerIndex
         return {
           ...state,
@@ -82,7 +113,6 @@ export function gameReducer(
             idx !== state.currentPlayerIndex && opp.coins >= player.coins,
         )
         if (!opponentWithMore) {
-          state.gameOver = true
           state.winningPlayerIndex = state.currentPlayerIndex
           return {
             ...state,
@@ -108,6 +138,7 @@ export function gameReducer(
 
     case GamePhases.action: {
       const { actionChosen } = phase.payload
+      state.shipLocations[state.currentPlayerIndex] = {}
       switch (actionChosen) {
         // TODO: Verify action is valid for player prior to returning
         case 'draw':
@@ -122,7 +153,7 @@ export function gameReducer(
           // TODO: Check if any opponents block this action
           return { ...state, phase: GamePhases.buildShip }
         case 'attack':
-          return { ...state, phase: GamePhases.attackTarget }
+          return { ...state, phase: GamePhases.attackStart }
         default:
           throw new Error(`Invalid action ${actionChosen}`)
       }
@@ -191,33 +222,181 @@ export function gameReducer(
     }
 
     case GamePhases.attackStart: {
-      const { targetPlayerIndex } = phase.payload
-      const targetPlayer = state.players[targetPlayerIndex]
-      if (!targetPlayer.forts) {
-        // Check if can open water attack
+      const { targetPlayerIndex, fortID } = phase.payload
+      const openWaterAttack = !state.players.some(p => p.forts.length >= 1)
+
+      if (openWaterAttack) {
+        state.attackIsOpenWater = true
+        return { ...state, phase: 'attackRoll' }
+      }
+      const targetNotAvailable = Object.values(state.shipLocations).some(
+        loc => loc.targetPlayerIndex === targetPlayerIndex,
+      )
+      if (targetNotAvailable) {
+        throw new Error(`${targetPlayerIndex} cannot be attacked.`)
+      }
+      // track which player and fort is attacked
+      state.shipLocations[state.currentPlayerIndex] = {
+        targetPlayerIndex: targetPlayerIndex,
+        fortID: fortID,
+      }
+      return {
+        ...state,
+        phase: 'attackRoll',
       }
     }
 
-    // 6/14 TODO:
-    // Attack target -> open waters if no opponent forts
-    // Attack roll -> reroll -> finalize
-    // Attack Phases:
-    // Leadership, first wave, reinforce if no target rolls, otherwise choice
+    case GamePhases.attackRoll: {
+      // possible actions: init, reroll, keep
+      const { action, diceToReroll } = phase.payload
+
+      let player = state.players[state.currentPlayerIndex]
+      if (action === 'init') {
+        let dice = player.attack_dice
+        // TODO: Account for opponent effects
+        state.attackRoll = rollDice(dice)
+        state.attackRerollsRemaining = player.rerolls
+        return {
+          ...state,
+          phase: 'attackRoll',
+        }
+      }
+      let rerollsLeft = state.attackRerollsRemaining
+      if (action === 'reroll' && rerollsLeft > 0) {
+        // Reroll selected dice
+        const reroll = state.attackRoll.map((val, idx) =>
+          diceToReroll.includes(idx) ? rollSingleDie() : val,
+        )
+
+        return {
+          ...state,
+          attackRoll: reroll,
+          attackRerollsRemaining: rerollsLeft--,
+          phase: GamePhases.attackRoll,
+        }
+      }
+
+      if (action === 'keep' || rerollsLeft === 0) {
+        // TODO: Add on attack effects to roll
+        state.attackValueCounts = reduceDice(state.attackRoll)
+        return {
+          ...state,
+          phase: GamePhases.attackLeadership,
+        }
+      }
+      return state
+    }
+
+    case GamePhases.attackLeadership: {
+      let player = state.players[state.currentPlayerIndex]
+      // TODO: Add player & fort effects
+      if (state.attackIsOpenWater) {
+        return {
+          ...state,
+          phase: 'attackReinforce',
+        }
+      }
+      return {
+        ...state,
+        phase: 'attackWave1',
+      }
+    }
+
+    case GamePhases.attackWave1: {
+      // UI should give valid targets
+      const { attackColor, attackRow, attackCol } = phase.payload
+      let player = state.players[state.currentPlayerIndex]
+      // TODO: Check player / fort abilities
+      const attackTargets = state.shipLocations[state.currentPlayerIndex]
+      const targetPlayer = state.players[attackTargets.targetPlayerIndex!]
+      let targetFort = targetPlayer.findFort(attackTargets.fortID!)
+      const diceStrength = state.attackRollCounts[attackColor]
+      delete state.attackValueCounts[attackColor] // remove from next rolls
+      const grid = targetFort.grid
+      grid.destroyAt(attackRow, attackCol)
+      // TODO: Ensure change is preserved
+
+      return {
+        ...state,
+        phase: 'attackWave2',
+      }
+    }
+
+    case GamePhases.attackReinforceOrWave2: {
+      const { choice } = phase.payload
+      const valueCounts = state.attackValueCounts
+      if ((valueCounts['T'] ?? 0) === 0 || choice === 'reinforce') {
+        return {
+          ...state,
+          phase: 'attackReinforce',
+        }
+      }
+      return {
+        ...state,
+        phase: 'attackWave2',
+      }
+    }
+
+    case GamePhases.attackReinforce: {
+      const player = state.players[state.currentPlayerIndex]
+      const values = state.attackValueCounts
+      state.cubeReserve // cubes are a finitxe resource
+      const cubeColors = ['gray', 'black', 'white']
+      cubeColors.forEach(color => {
+        const toMove = Math.min(values[color], state.cubeReserve[color])
+        state.cubeReserve[color] -= toMove
+        player.updateCubes(toMove)
+        state.players[state.currentPlayerIndex] = player
+      })
+
+      return {
+        ...state,
+        phase: 'attackDestroy',
+      }
+    }
+
+    case GamePhases.attackWave2: {
+      const { gridLocs } = phase.payload
+      const numT = state.cubeReserve['T'] ?? 0
+
+      const player = state.players[state.currentPlayerIndex]
+      const attackTargets = state.shipLocations[state.currentPlayerIndex]
+      const targetPlayer = state.players[attackTargets.targetPlayerIndex!]
+      const targetFort = targetPlayer.findFort(attackTargets.fortID!)
+
+      return {
+        ...state,
+        phase: 'attackDestroy',
+      }
+    }
+
+    case GamePhases.attackDestroy: {
+      const attackTargets = state.shipLocations[state.currentPlayerIndex]
+      const targetPlayer = state.players[attackTargets.targetPlayerIndex!]
+      const targetFort = targetPlayer.findFort(attackTargets.fortID!)
+      if (targetFort.hasShells()) {
+        return {
+          ...state,
+          phase: 'endTurn',
+        }
+      }
+      // Destroys forts + buildings
+      // Returns colonists to Player
+      targetPlayer.destroyFort(attackTargets.fortID!)
+      state.players[attackTargets.targetPlayerIndex!] = targetPlayer
+      return {
+        ...state,
+        phase: 'endTurn',
+      }
+    }
 
     case GamePhases.endTurn: {
-      const playerCount = state.players.length
-      let nextPlayerIndex = (state.currentPlayerIndex += 1)
-      if (nextPlayerIndex > playerCount) {
-        nextPlayerIndex = 0
-      }
-      state.currentPlayerIndex = nextPlayerIndex
+      state.currentPlayerIndex =
+        state.currentPlayerIndex++ % state.players.length
       return {
         ...state,
         phase: 'victory',
       }
-    }
-
-    case GamePhases.gameOver: {
     }
 
     default:

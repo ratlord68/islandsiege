@@ -10,7 +10,7 @@ export class GovernorsMansion extends Building {
       coins: 3,
       repairColor: 'black',
       description:
-        "When built, discard 1 random card from an opponent's building. Your opponents cannot take Draw actions.",
+        "When built, discard 1 random card from an opponent's hand. Your opponents cannot take Draw actions.",
     })
   }
 }

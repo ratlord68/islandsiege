@@ -289,7 +289,7 @@
       "requires": 3,
       "gold": 3,
       "repair": "B",
-      "description": "When built, discard 1 random card from an opponent's building. Your opponents cannot take Draw actions.",
+      "description": "When built, discard 1 random card from an opponent's hand. Your opponents cannot take Draw actions.",
       "id": "governorsMansion"
     },
     {
