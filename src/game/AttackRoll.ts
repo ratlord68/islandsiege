@@ -12,12 +12,11 @@ export function rollSingleDie(): DieValue {
   return new Die().value
 }
 
-export type rollCounts = Record<DieValue, number>
+export type rollCounts = Partial<Record<DieValue, number>>
 
 export function reduceDice(roll: DieValue[]): rollCounts {
-  const tally = roll.reduce((acc, val) => {
+  return roll.reduce((acc, val) => {
     acc[val] = (acc[val] || 0) + 1
     return acc
   }, {} as rollCounts)
-  return tally
 }

@@ -1,16 +1,15 @@
-import { CubeColor, cubeSymbolToColor, colorToSymbol } from '../common/colors'
+import { ShellColor, symbolToColor, colorToSymbol } from '../common/colors'
 
 export type FortGridNaC = { type: 'NaC' }
-export type FortGridCube = { type: 'cube'; color: CubeColor | null }
-export type FortGridCell = FortGridCube | FortGridNaC
+export type FortGridShell = { type: 'shell'; color: ShellColor | null }
+export type FortGridCell = FortGridShell | FortGridNaC
 
 export type FortGridSpec = [number, number, string][]
 export const FORT_GRID_SIZE = 4
 
-type CubeInfo = {
-  row: number
-  col: number
-  color: CubeColor | null
+type ShellInfo = {
+  loc: [number, number]
+  color: ShellColor | null
   protectBonus: boolean
   connectStrength: number
 }
@@ -18,8 +17,8 @@ type CubeInfo = {
 export class FortGrid {
   readonly size: number = FORT_GRID_SIZE
   private grid: FortGridCell[][]
-  private cubeInfoCache: CubeInfo[] = []
-  hasShells: boolean = true
+  private shellInfoCache: ShellInfo[] = []
+  shellsRemaining: number = 0
 
   constructor(gridSpec: FortGridSpec) {
     this.grid = Array.from({ length: this.size }, () =>
@@ -31,17 +30,16 @@ export class FortGrid {
         throw new Error(`Invalid grid position: (${row}, ${col})`)
       }
 
-      const color = val === '.' ? null : cubeSymbolToColor(val)
+      const color = val === '.' ? null : symbolToColor(val)
       this.grid[row][col] = {
-        type: 'cube',
+        type: 'shell',
         color,
       }
 
-      this.cubeInfoCache.push({
-        row,
-        col,
+      this.shellInfoCache.push({
+        loc: [row, col],
         // the following properties may be changed throughout
-        color,
+        color: color,
         protectBonus: false,
         connectStrength: 0,
       })
@@ -53,84 +51,105 @@ export class FortGrid {
     return this.grid
   }
 
-  get cubeInfo(): CubeInfo[] {
-    return this.cubeInfoCache
+  get shellInfo(): ShellInfo[] {
+    return this.shellInfoCache
   }
 
-  cubeInfoAt(row: number, col: number): CubeInfo {
-    const info = this.cubeInfoCache.find(i => i.row === row && i.col === col)
+  shellInfoAt(loc: [number, number]): ShellInfo {
+    const [row, col] = loc
+    const info = this.shellInfoCache.find(
+      s => s.loc[0] === row && s.loc[1] === col,
+    )
     if (!info) {
-      throw new Error(`No cube info found at (${row}, ${col})`)
+      throw new Error(`No shell info found at (${loc}): ${this.shellInfoCache}`)
     }
     return info
   }
 
-  cellAt(row: number, col: number): FortGridCell {
-    return this.grid[row]?.[col]
+  cellAt(loc: [number, number]): FortGridCell {
+    const [r, c] = loc
+    return this.grid[r]?.[c]
   }
 
   private updateShellInfo(): void {
-    let hasShells = false
-    for (const info of this.cubeInfoCache) {
-      const { row, col } = info
-      const cell = this.grid[row][col]
+    let shellCount = 0
+    for (const info of this.shellInfoCache) {
+      const loc = info.loc
+      const cell = this.grid[loc[0]][loc[1]]
 
-      if (cell.type !== 'cube') continue
+      if (cell.type !== 'shell') continue
       if (cell.color) {
-        hasShells = true
+        shellCount++
       }
       info.color = cell.color ?? null
-      info.protectBonus = this.cellAtIsProtected(row, col)
-      info.connectStrength = this.cellAtConnectedStrength(row, col)
+      info.protectBonus = this.cellAtIsProtected(loc)
+      info.connectStrength = this.cellAtConnectedStrength(loc)
     }
-    this.hasShells = hasShells // otherwise, slated for destruction
+    this.shellsRemaining = shellCount
   }
 
-  cellAtIsProtected(row: number, col: number): boolean {
+  cellAtIsProtected(loc: [number, number]): boolean {
+    const [row, col] = loc
     for (let r = 0; r < row; r++) {
       const cell = this.grid[r][col]
-      if (cell.type === 'cube' && cell.color !== null) return true
+      if (cell.type === 'shell' && cell.color !== null) return true
     }
     return false
   }
 
-  cellAtConnectedStrength(row: number, col: number): number {
-    return this.traverseConnectedCubes(row, col).length
+  cellAtConnectedStrength(loc: [number, number]): number {
+    return this.traverseConnectedShells(loc).length
   }
 
   buildSpec(specs: FortGridSpec): number {
     let builds = 0
     for (const [r, c, symbol] of specs) {
       const cell = this.grid[r][c]
-      if (cell.type !== 'cube') continue
+      if (cell.type !== 'shell') continue
       if (cell.color) {
         throw new Error('Attempting to build on non-empty cell.')
       }
-      cell.color = symbol === '.' ? null : cubeSymbolToColor(symbol)
+      cell.color = symbol === '.' ? null : symbolToColor(symbol)
       builds += 1
     }
     this.updateShellInfo()
     return builds
   }
 
-  destroyAt(row: number, col: number): void {
-    this.traverseConnectedCubes(row, col, (r, c) => {
+  attackAt(loc: [number, number], count: number): boolean {
+    const info = this.shellInfo.find(i => i.loc === loc)
+    if (info && (info.protectBonus || info.connectStrength > count)) {
+      return false
+    }
+    this.destroyAt(loc, true)
+    return true
+  }
+
+  destroyAt(loc: [number, number], destroyConnected: boolean = false): void {
+    if (destroyConnected) {
+      this.traverseConnectedShells(loc, (r, c) => {
+        const cell = this.grid[r][c]
+        if (cell.type === 'shell') {
+          cell.color = null
+        }
+      })
+    } else {
+      const [r, c] = loc
       const cell = this.grid[r][c]
-      if (cell.type === 'cube') {
+      if (cell.type === 'shell') {
         cell.color = null
       }
-    })
-
+    }
     this.updateShellInfo()
   }
 
-  private traverseConnectedCubes(
-    row: number,
-    col: number,
+  private traverseConnectedShells(
+    loc: [number, number],
     fn?: (r: number, c: number) => void,
   ): [number, number][] {
+    const [row, col] = loc
     const start = this.grid[row]?.[col]
-    if (!start || start.type !== 'cube' || start.color == null) return []
+    if (!start || start.type !== 'shell' || start.color == null) return []
 
     const color = start.color
     const visited = new Set<string>()
@@ -143,7 +162,7 @@ export class FortGrid {
       if (visited.has(key)) continue
 
       const cell = this.grid[r]?.[c]
-      if (!cell || cell.type !== 'cube' || cell.color !== color) continue
+      if (!cell || cell.type !== 'shell' || cell.color !== color) continue
 
       visited.add(key)
       result.push([r, c])

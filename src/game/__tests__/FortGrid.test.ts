@@ -1,5 +1,5 @@
 import { FortGrid } from '../FortGrid'
-import type { FortGridSpec, FortGridCube } from '../FortGrid'
+import type { FortGridSpec, FortGridShell } from '../FortGrid'
 
 describe('FortGrid', () => {
   it('creates grid from spec', () => {
@@ -18,17 +18,17 @@ describe('FortGrid', () => {
 
     const grid = new FortGrid(spec)
     for (const [row, col, color] of expected) {
-      const cell = grid.cellAt(row, col)
-      expect(cell?.type).toBe('cube')
-      if (cell?.type === 'cube') {
+      const cell = grid.cellAt([row, col])
+      expect(cell?.type).toBe('shell')
+      if (cell?.type === 'shell') {
         expect(cell.color).toBe(color)
       }
     }
-    let cell = grid.cellAt(0, 2)
+    let cell = grid.cellAt([0, 2])
     expect(cell?.type).toBe('NaC')
 
-    // cube info should not include NaC cells
-    expect(grid.cubeInfo).toHaveLength(4)
+    // shell info should not include NaC cells
+    expect(grid.shellInfo).toHaveLength(4)
   })
 
   it('throws on invalid grid position', () => {
@@ -38,7 +38,7 @@ describe('FortGrid', () => {
 
   it('throws on unknown symbol', () => {
     const badSpec: FortGridSpec = [[0, 0, 'X']]
-    expect(() => new FortGrid(badSpec)).toThrow('Unknown cube symbol: X')
+    expect(() => new FortGrid(badSpec)).toThrow('Unknown shell symbol: X')
   })
 
   it('toString and fromString work as expected', () => {
@@ -56,17 +56,17 @@ describe('FortGrid', () => {
     const parsedGrid = FortGrid.fromString(str)
     expect(parsedGrid.toString()).toBe(str) // Round-trip consistency
   })
-  it('cellIsProtected detects blocking cubes', () => {
+  it('cellIsProtected detects blocking shells', () => {
     const spec: FortGridSpec = [
       [0, 0, 'B'],
       [1, 0, 'G'],
     ]
     const grid = new FortGrid(spec)
-    expect(grid.cellAtIsProtected(1, 0)).toBe(true)
-    expect(grid.cellAtIsProtected(0, 0)).toBe(false)
+    expect(grid.cellAtIsProtected([1, 0])).toBe(true)
+    expect(grid.cellAtIsProtected([0, 0])).toBe(false)
   })
 
-  it('cellConnectedStrength returns number of connected cubes with same color', () => {
+  it('cellConnectedStrength returns number of connected shells with same color', () => {
     const grid = FortGrid.fromString(`
                   ~ ~ ~ ~
                   ~ B B ~
@@ -74,8 +74,8 @@ describe('FortGrid', () => {
                   ~ ~ ~ ~
                   `)
 
-    expect(grid.cellAtConnectedStrength(1, 1)).toBe(3)
-    expect(grid.cellAtConnectedStrength(2, 2)).toBe(1)
+    expect(grid.cellAtConnectedStrength([1, 1])).toBe(3)
+    expect(grid.cellAtConnectedStrength([2, 2])).toBe(1)
   })
   it('builds on empty cells', () => {
     const grid = FortGrid.fromString(`
@@ -84,20 +84,20 @@ describe('FortGrid', () => {
           ~ . W ~
           ~ ~ ~ ~
           `)
-    let cell = grid.cellAt(1, 2)
-    expect(cell.type).toBe('cube')
-    expect((cell as FortGridCube).color).toBeNull()
+    let cell = grid.cellAt([1, 2])
+    expect(cell.type).toBe('shell')
+    expect((cell as FortGridShell).color).toBeNull()
     grid.buildSpec([
       [1, 2, 'W'],
       [2, 1, 'W'],
     ])
-    cell = grid.cellAt(1, 2)
-    expect(cell.type).toBe('cube')
-    expect((cell as FortGridCube).color).toBe('white')
+    cell = grid.cellAt([1, 2])
+    expect(cell.type).toBe('shell')
+    expect((cell as FortGridShell).color).toBe('white')
 
     // when adding to NaC, nothing happens
     grid.buildSpec([[0, 0, 'black']])
-    cell = grid.cellAt(0, 0)
+    cell = grid.cellAt([0, 0])
     expect(cell.type).toBe('NaC')
   })
   it('destroys connected cells', () => {
@@ -107,31 +107,31 @@ describe('FortGrid', () => {
           ~ ~ ~ ~
           ~ ~ ~ ~
           `)
-    let cell = grid.cellAt(1, 3)
-    expect((cell as FortGridCube).color).toBe('white')
-    grid.destroyAt(1, 3)
-    cell = grid.cellAt(1, 3)
-    expect(cell.type).toBe('cube')
-    expect((cell as FortGridCube).color).toBeNull()
+    let cell = grid.cellAt([1, 3])
+    expect((cell as FortGridShell).color).toBe('white')
+    grid.destroyAt([1, 3])
+    cell = grid.cellAt([1, 3])
+    expect(cell.type).toBe('shell')
+    expect((cell as FortGridShell).color).toBeNull()
 
-    grid.destroyAt(1, 1) // will destroy neighbors
-    cell = grid.cellAt(1, 1)
-    expect((cell as FortGridCube).color).toBeNull()
-    cell = grid.cellAt(1, 2)
-    expect((cell as FortGridCube).color).toBeNull()
-    cell = grid.cellAt(1, 0)
-    expect((cell as FortGridCube).color).toBe('gray')
+    grid.destroyAt([1, 1], true) // will destroy neighbors
+    cell = grid.cellAt([1, 1])
+    expect((cell as FortGridShell).color).toBeNull()
+    cell = grid.cellAt([1, 2])
+    expect((cell as FortGridShell).color).toBeNull()
+    cell = grid.cellAt([1, 0])
+    expect((cell as FortGridShell).color).toBe('gray')
   })
-  it('provides a cached representation of cubes and protection bonuses', () => {
+  it('provides a cached representation of shells and protection bonuses', () => {
     const grid = FortGrid.fromString(`
           ~ ~ ~ ~
           ~ B B W
           ~ W ~ ~
           ~ ~ ~ ~
           `)
-    let info = grid.cubeInfo
+    let info = grid.shellInfo
   })
-  it('updates cubeInfo correctly after destruction', () => {
+  it('updates shellInfo correctly after destruction', () => {
     const grid = FortGrid.fromString(`
       ~ ~ ~ ~
       ~ B B W
@@ -139,19 +139,19 @@ describe('FortGrid', () => {
       ~ ~ ~ ~
     `)
 
-    let info = grid.cubeInfoAt(1, 1)
+    let info = grid.shellInfoAt([1, 1])
     expect(info.color).toBe('black')
     expect(info.protectBonus).toBe(false)
     expect(info.connectStrength).toBe(2)
 
-    info = grid.cubeInfoAt(2, 1)
+    info = grid.shellInfoAt([2, 1])
     expect(info.color).toBe('white')
     expect(info.protectBonus).toBe(true)
     expect(info.connectStrength).toBe(1)
 
     // destruction will remove protection
-    grid.destroyAt(1, 2)
-    info = grid.cubeInfoAt(2, 1)
+    grid.destroyAt([1, 1])
+    info = grid.shellInfoAt([2, 1])
     expect(info.protectBonus).toBe(false)
   })
 })

@@ -27,7 +27,6 @@ export type Phase =
   | 'draw'
   | 'discard'
   | 'buildFort'
-  | 'addFortCubes'
   | 'buildBuilding'
   | 'buildShip'
   | 'attackStart'
@@ -55,7 +54,6 @@ export const GamePhases = {
   draw: 'draw',
   discard: 'discard',
   buildFort: 'buildFort',
-  addFortCubes: 'addFortCubes',
   buildBuilding: 'buildBuilding',
   buildShip: 'buildShip',
   attackStart: 'attackStart',

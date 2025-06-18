@@ -88,8 +88,8 @@ export class Fort implements FortCard {
     return true
   }
 
-  hasShells(): boolean {
-    return this.grid.hasShells
+  get shellsRemaining(): number {
+    return this.grid.shellsRemaining
   }
 
   removeColonists(count: number = 1): boolean {

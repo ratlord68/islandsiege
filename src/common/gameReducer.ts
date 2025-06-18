@@ -1,10 +1,11 @@
 import type { GameState } from '../game/GameState'
-import { Fort } from '../game/Fort'
+import { FortRegistry } from 'game/forts'
 import { Building } from '../game/Building'
 import { Ship } from '../game/Ship'
 import { Player } from '../game/Player'
 import { GamePhases, Phase } from './phases'
 import { rollDice, rollSingleDie, reduceDice } from '../game/AttackRoll'
+import { FortGridSpec } from 'game/FortGrid'
 
 export function gameReducer(
   state: GameState,
@@ -129,7 +130,6 @@ export function gameReducer(
     case GamePhases.colonize: {
       const player = state.players[state.currentPlayerIndex]
       player.populateForts()
-      state.players[state.currentPlayerIndex] = player
       return {
         ...state,
         phase: 'action',
@@ -160,34 +160,38 @@ export function gameReducer(
     }
 
     case GamePhases.buildFort: {
-      const { fortCard } = phase.payload
-      const player = state.players[state.currentPlayerIndex]
-
-      const fort = new Fort(fortCard)
-      player.addFort(fort)
-      state.players[state.currentPlayerIndex] = player
-      return {
-        ...state,
-        phase: 'addFortCubes',
-      }
-    }
-
-    case GamePhases.addFortCubes: {
+      // Fort ID, coordinates / colors to built
       const { fortID, fortGridSpec } = phase.payload
-
       const player = state.players[state.currentPlayerIndex]
-      const fort = player.findFort(fortID)
-      // Need to verify this is properly propagated
-      // Otherwise, add buildSpec method to Fort class
+      const ToBuild = FortRegistry[fortID as keyof typeof FortRegistry]
+      if (!ToBuild) {
+        throw new Error(`Could not find information for $fortID`)
+      }
+      const fort = new ToBuild()
+      player.addFort(fort)
+
+      // Add shells to FortGrid
       const grid = fort.grid
-      const cubesBuilt = grid.buildSpec(fortGridSpec)
-      if (fortGridSpec.length > cubesBuilt) {
-        // sanity check for not all requested builds completing
+      let shellsBuilt = 0
+      // grid.buildSpec(fortGridSpec);
+      // TODO: Verify player has adequate shells in supply
+      for (const spec of fortGridSpec) {
+        const color = spec[2]
+        if (player.cubes[color] > 0) {
+          grid.buildSpec([spec])
+          player.cubes[color]--
+          shellsBuilt++
+        } else {
+          throw new Error(
+            `Player does not have enough ${color} in shell supply.`,
+          )
+        }
+      }
+      if (fortGridSpec.length !== shellsBuilt) {
         throw new Error(`Could not build all ${fortGridSpec} on ${fort.id}`)
       }
       // TODO: Check if opponents reduce this action
-      player.coins += cubesBuilt
-      state.players[state.currentPlayerIndex] = player
+      player.coins += shellsBuilt
       return {
         ...state,
         phase: 'endTurn',
@@ -224,9 +228,9 @@ export function gameReducer(
     case GamePhases.attackStart: {
       const { targetPlayerIndex, fortID } = phase.payload
       const openWaterAttack = !state.players.some(p => p.forts.length >= 1)
+      state.attackIsOpenWater = openWaterAttack
 
       if (openWaterAttack) {
-        state.attackIsOpenWater = true
         return { ...state, phase: 'attackRoll' }
       }
       const targetNotAvailable = Object.values(state.shipLocations).some(
@@ -248,7 +252,7 @@ export function gameReducer(
 
     case GamePhases.attackRoll: {
       // possible actions: init, reroll, keep
-      const { action, diceToReroll } = phase.payload
+      const { action, diceIndicesReroll } = phase.payload
 
       let player = state.players[state.currentPlayerIndex]
       if (action === 'init') {
@@ -261,24 +265,21 @@ export function gameReducer(
           phase: 'attackRoll',
         }
       }
-      let rerollsLeft = state.attackRerollsRemaining
-      if (action === 'reroll' && rerollsLeft > 0) {
-        // Reroll selected dice
-        const reroll = state.attackRoll.map((val, idx) =>
-          diceToReroll.includes(idx) ? rollSingleDie() : val,
-        )
+      if (action === 'reroll' && state.attackRerollsRemaining > 0) {
+        diceIndicesReroll.forEach((idx: number) => {
+          state.attackRoll![idx] = rollSingleDie()
+        })
+        state.attackRerollsRemaining--
 
         return {
           ...state,
-          attackRoll: reroll,
-          attackRerollsRemaining: rerollsLeft--,
           phase: GamePhases.attackRoll,
         }
       }
 
-      if (action === 'keep' || rerollsLeft === 0) {
+      if (action === 'keep' || state.attackRerollsRemaining === 0) {
         // TODO: Add on attack effects to roll
-        state.attackValueCounts = reduceDice(state.attackRoll)
+        state.attackValueCounts = reduceDice(state.attackRoll!)
         return {
           ...state,
           phase: GamePhases.attackLeadership,
@@ -304,21 +305,21 @@ export function gameReducer(
 
     case GamePhases.attackWave1: {
       // UI should give valid targets
-      const { attackColor, attackRow, attackCol } = phase.payload
+      const { attackColor, attackLoc } = phase.payload
       let player = state.players[state.currentPlayerIndex]
       // TODO: Check player / fort abilities
       const attackTargets = state.shipLocations[state.currentPlayerIndex]
       const targetPlayer = state.players[attackTargets.targetPlayerIndex!]
       let targetFort = targetPlayer.findFort(attackTargets.fortID!)
-      const diceStrength = state.attackRollCounts[attackColor]
+      const diceStrength = state.attackValueCounts[attackColor]
       delete state.attackValueCounts[attackColor] // remove from next rolls
       const grid = targetFort.grid
-      grid.destroyAt(attackRow, attackCol)
+      grid.attackAt(attackLoc, diceStrength)
       // TODO: Ensure change is preserved
 
       return {
         ...state,
-        phase: 'attackWave2',
+        phase: 'attackReinforceOrWave2',
       }
     }
 
@@ -374,7 +375,7 @@ export function gameReducer(
       const attackTargets = state.shipLocations[state.currentPlayerIndex]
       const targetPlayer = state.players[attackTargets.targetPlayerIndex!]
       const targetFort = targetPlayer.findFort(attackTargets.fortID!)
-      if (targetFort.hasShells()) {
+      if (targetFort.shellsRemaining > 0) {
         return {
           ...state,
           phase: 'endTurn',

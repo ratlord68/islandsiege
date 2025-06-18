@@ -1,5 +1,5 @@
 import { Fort } from '../Fort'
-import type { FortGridCube } from '../FortGrid'
+import type { FortGridShell } from '../FortGrid'
 import { createMockFortCard, createMockBuildingCard } from '../__mocks__'
 import { Building } from '../Building'
 
@@ -17,10 +17,10 @@ describe('Fort', () => {
     expect(fort.type).toBe('fort')
     expect(fort.name).toBe('Test Fort')
     expect(fort.description).toBe('Testing')
-    expect(fort.grid.cubeInfo).toHaveLength(4)
-    let cell = fort.grid.cellAt(0, 0)
-    expect(cell.type).toBe('cube')
-    expect((cell as FortGridCube).color).toBe('black')
+    expect(fort.grid.shellInfo).toHaveLength(4)
+    let cell = fort.grid.cellAt([0, 0])
+    expect(cell.type).toBe('shell')
+    expect((cell as FortGridShell).color).toBe('black')
     expect(fort.slots).toBe(3)
     expect(fort.openSlots).toBe(3)
     expect(fort.usedSlots).toBe(0)
@@ -28,11 +28,11 @@ describe('Fort', () => {
   })
 
   it('builds on empty cells', () => {
-    let cell = fort.grid.cellAt(0, 1)
-    expect((cell as FortGridCube).color).toBeNull()
+    let cell = fort.grid.cellAt([0, 1])
+    expect((cell as FortGridShell).color).toBeNull()
     fort.grid.buildSpec([[0, 1, 'B']])
-    cell = fort.grid.cellAt(0, 1)
-    expect((cell as FortGridCube).color).toBe('black')
+    cell = fort.grid.cellAt([0, 1])
+    expect((cell as FortGridShell).color).toBe('black')
   })
 
   it('places and removes colonists correctly', () => {
@@ -60,14 +60,14 @@ describe('Fort', () => {
     const fort = new Fort(mockFortCard)
     const building = new Building(createMockBuildingCard())
     expect(building.repairColor).toBe('black')
-    let cell = fort.grid.cellAt(0, 1)
-    expect((cell as FortGridCube).color).toBeNull()
+    let cell = fort.grid.cellAt([0, 1])
+    expect((cell as FortGridShell).color).toBeNull()
 
     fort.placeColonists(2)
     fort.addBuilding(building, [0, 1])
     expect(fort.buildings).toContain(building)
-    cell = fort.grid.cellAt(0, 1)
-    expect((cell as FortGridCube).color).toBe('black')
+    cell = fort.grid.cellAt([0, 1])
+    expect((cell as FortGridShell).color).toBe('black')
   })
 
   it('contains multiple buildings, if can build', () => {

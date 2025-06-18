@@ -17,7 +17,7 @@ describe('createPlayer', () => {
     expect(p1.ships).toEqual([])
     expect(p1.colonists).toBe(9)
     expect(p1.cubes).toEqual({ black: 0, gray: 0, white: 0 })
-    expect(p1.attack_dice).toBe(2)
+    expect(p1.attack_dice).toBe(3)
     expect(p1.rerolls).toBe(1)
   })
   it('respects overrides', () => {

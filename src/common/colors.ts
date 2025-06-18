@@ -1,30 +1,30 @@
-export const CubeColors = {
+export const ShellColors = {
   black: '#222222',
   white: '#eeeeee',
   gray: '#888888',
 } as const
 
-export type CubeColor = keyof typeof CubeColors // 'black' | 'white' | 'gray'
+export type ShellColor = keyof typeof ShellColors // 'black' | 'white' | 'gray'
 
-const COLOR_SYMBOLS: Record<CubeColor, string> = {
+const COLOR_SYMBOLS: Record<ShellColor, string> = {
   black: 'B',
   gray: 'G',
   white: 'W',
 }
 
-const SYMBOL_COLORS: Record<string, CubeColor> = {
+const SYMBOL_COLORS: Record<string, ShellColor> = {
   B: 'black',
   G: 'gray',
   W: 'white',
 }
 
-export function cubeSymbolToColor(symbol: string): CubeColor {
+export function symbolToColor(symbol: string): ShellColor {
   const color = SYMBOL_COLORS[symbol]
-  if (!color) throw new Error(`Unknown cube symbol: ${symbol}`)
+  if (!color) throw new Error(`Unknown shell symbol: ${symbol}`)
   return color
 }
 
-export function colorToSymbol(color: CubeColor | null): string {
+export function colorToSymbol(color: ShellColor | null): string {
   if (color === null) return '.'
   const symbol = COLOR_SYMBOLS[color]
   if (!symbol) throw new Error(`Cannot convert color to symbol: ${color}`)

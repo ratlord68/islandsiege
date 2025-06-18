@@ -1,4 +1,4 @@
-import type { CubeReserve } from '../types'
+import type { CubeReserve } from './Game'
 import type { Fort } from './Fort'
 import type { Ship } from './Ship'
 import type { Building } from './Building'
@@ -17,8 +17,8 @@ export class Player {
   ships: Ship[] = []
 
   colonists: number = Player.MAX_COLONISTS
-  cubes: CubeReserve = { black: 0, gray: 0, white: 0 }
-  attack_dice: number = 2
+  cubes: CubeReserve = { B: 0, G: 0, W: 0 }
+  attack_dice: number = 3
   rerolls: number = 1
 
   attackRoll: DieValue[] = []
