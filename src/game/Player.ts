@@ -10,6 +10,7 @@ export class Player {
   static MAX_COLONISTS = 9
   readonly id: string
   readonly name: string
+  color?: string
 
   coins: number = 0
   hand: Card[] = []
@@ -28,6 +29,7 @@ export class Player {
   constructor(name: string, idx: number, overrides: Partial<Player> = {}) {
     this.id = `p${idx}`
     this.name = name
+    this.color = overrides.color
     Object.assign(this, overrides)
 
     // Deep merge cube reserve

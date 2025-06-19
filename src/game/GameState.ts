@@ -4,6 +4,7 @@ import { DieValue } from './Die'
 import { Phase } from '../common/phases'
 import type { rollCounts } from './AttackRoll'
 import { ShellReserve } from './Game'
+import { GamePhases } from '../common/phases'
 
 export type GameState = {
   players: Player[]
@@ -25,4 +26,21 @@ export type GameState = {
   attackRerollsRemaining: number
   attackValueCounts: rollCounts
   winningPlayerIndex: number | undefined
+}
+
+export function createInitialGameState(): GameState {
+  return {
+    players: [],
+    currentPlayerIndex: 0,
+    deck: new Deck(),
+    phase: GamePhases.initGame,
+    pending: {},
+    shipLocations: {},
+    shellReserve: {} as ShellReserve,
+    attackIsOpenWater: false,
+    attackRoll: undefined,
+    attackRerollsRemaining: 0,
+    attackValueCounts: {},
+    winningPlayerIndex: undefined,
+  }
 }

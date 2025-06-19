@@ -24,7 +24,10 @@ describe('gameReducer', () => {
   it('initGame - will initialize the game state and draw', () => {
     const payload = {
       type: GamePhases.initGame,
-      payload: { playerNames: ['Cpt', 'Arg', 'Matey'] },
+      payload: {
+        playerNames: ['Cpt', 'Arg', 'Matey'],
+        playerColors: ['#fff', '#000', '#f00'],
+      },
     }
     const state = gameReducer(gs, payload)
     expect(state.players.length).toBe(3)

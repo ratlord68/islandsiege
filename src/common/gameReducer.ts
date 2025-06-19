@@ -15,13 +15,14 @@ export function gameReducer(
 ): GameState {
   switch (phase.type) {
     case GamePhases.initGame:
-      const { playerNames } = phase.payload
+      const { playerNames, playerColors } = phase.payload
       // Create players from player names
       if (!playerNames || playerNames.length < 2) {
         throw new Error('At least two players are required to start the game.')
       }
       state.players = playerNames.map(
-        (name: string, idx: number) => new Player(name, idx + 1),
+        (name: string, idx: number) =>
+          new Player(name, idx + 1, { color: playerColors[idx] }),
       )
       state.shellReserve = { black: 5, white: 5, gray: 5 }
       // TODO: Seed randomness

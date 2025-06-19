@@ -52,7 +52,7 @@ export class Deck {
     return Array.from({ length: count }, () => this.drawOne())
   }
 
-  discard(cards: Card[]): void {
+  discardCards(cards: Card[]): void {
     this.discardPile.push(...cards)
   }
 
@@ -90,7 +90,7 @@ export class Deck {
     return this.shuffleCount
   }
 
-  getDiscardPile(): Card[] {
+  get discard(): Card[] {
     return [...this.discardPile]
   }
 
