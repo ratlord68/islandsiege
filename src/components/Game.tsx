@@ -71,6 +71,16 @@ const Game: React.FC = () => {
     )
   }
 
+  if (state.phase === GamePhases.initDistribute) {
+    return (
+      <div>
+        <h2>Cards have been distributed!</h2>
+        <GameBoard state={state} dispatch={dispatch} />
+        <button onClick={() => dispatch({ type: 'action' })}>Continue</button>
+      </div>
+    )
+  }
+
   // Main game UI
   return (
     <div style={{ padding: 20 }}>

@@ -9,9 +9,17 @@ interface PlayerPanelProps {
   player: Player
   color?: string
   active?: boolean
+  onCardSelect?: (cardID: string) => void
+  selectedCardID?: string
 }
 
-const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, color, active }) => {
+const PlayerPanel: React.FC<PlayerPanelProps> = ({
+  player,
+  color,
+  active,
+  onCardSelect,
+  selectedCardID,
+}) => {
   return (
     <div
       style={{
@@ -25,17 +33,19 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, color, active }) => {
       <p>ID: {player.id}</p>
       <p>Colonists: {player.colonists}</p>
       <p>Coins: {player.coins}</p>
-      <p>
-        Cubes:
-        <ul>
-          <li>Black: {player.shells?.black ?? 0}</li>
-          <li>Gray: {player.shells?.gray ?? 0}</li>
-          <li>White: {player.shells?.white ?? 0}</li>
-        </ul>
-      </p>
+      <p>Shells:</p>
+      <ul>
+        <li>Black: ...</li>
+        <li>Gray: ...</li>
+        <li>White: ...</li>
+      </ul>
       <div style={{ marginTop: 16 }}>
         <h3>Hand ({player.hand.length})</h3>
-        <Hand cards={player.hand ?? []} />
+        <Hand
+          cards={player.hand ?? []}
+          onCardSelect={onCardSelect}
+          selectedCardID={selectedCardID}
+        />
         <h3>Forts</h3>
         {player.forts?.length === 0 ? (
           <p>None</p>

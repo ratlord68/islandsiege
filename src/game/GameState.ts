@@ -12,7 +12,7 @@ export type GameState = {
   deck: Deck
   phase: Phase
 
-  pending: {} // wait for all player actions to synchronize
+  pending?: { [playerIdx: number]: string } // wait for all player actions to synchronize
   shipLocations: {
     // Track player protection, once attacked
     [playerIndex: number]: {

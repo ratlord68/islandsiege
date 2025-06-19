@@ -49,7 +49,7 @@ export class Player {
   removeCardInHand(cardID: string): Card {
     const cardIdx = this.hand.findIndex((c: Card) => c.id === cardID)
     if (cardIdx === -1) {
-      throw new Error(`Card ${cardID} not in hand`)
+      throw new Error(`${this.id}: Card ${cardID} not in hand`)
     }
     const [card] = this.hand.splice(cardIdx, 1)
     return card
