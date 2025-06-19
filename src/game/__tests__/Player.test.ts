@@ -16,18 +16,18 @@ describe('createPlayer', () => {
     expect(p1.forts).toEqual([])
     expect(p1.ships).toEqual([])
     expect(p1.colonists).toBe(9)
-    expect(p1.cubes).toEqual({ black: 0, gray: 0, white: 0 })
+    expect(p1.shells).toEqual({ black: 0, gray: 0, white: 0 })
     expect(p1.attack_dice).toBe(3)
     expect(p1.rerolls).toBe(1)
   })
   it('respects overrides', () => {
     const p2 = new Player('Blackbeard', 2, {
       coins: 3,
-      cubes: { black: 2 },
+      shells: { black: 2 },
     })
     expect(p2.id).toBe('p2')
     expect(p2.coins).toBe(3)
-    expect(p2.cubes).toEqual({ black: 2, gray: 0, white: 0 })
+    expect(p2.shells).toEqual({ black: 2, gray: 0, white: 0 })
   })
   it('contains forts and populates them', () => {
     const fort1 = new Fort(createMockFortCard())

@@ -17,7 +17,7 @@ type ShellInfo = {
 export class FortGrid {
   readonly size: number = FORT_GRID_SIZE
   private grid: FortGridCell[][]
-  private shellInfoCache: ShellInfo[] = []
+  shellInfoCache: ShellInfo[] = []
   shellsRemaining: number = 0
 
   constructor(gridSpec: FortGridSpec) {
@@ -29,21 +29,19 @@ export class FortGrid {
       if (row >= this.size || col >= this.size) {
         throw new Error(`Invalid grid position: (${row}, ${col})`)
       }
-
       const color = val === '.' ? null : symbolToColor(val)
       this.grid[row][col] = {
         type: 'shell',
         color,
       }
-
       this.shellInfoCache.push({
         loc: [row, col],
-        // the following properties may be changed throughout
         color: color,
         protectBonus: false,
         connectStrength: 0,
       })
     }
+
     this.updateShellInfo()
   }
 
@@ -89,10 +87,17 @@ export class FortGrid {
   }
 
   cellAtIsProtected(loc: [number, number]): boolean {
-    const [row, col] = loc
-    for (let r = 0; r < row; r++) {
-      const cell = this.grid[r][col]
-      if (cell.type === 'shell' && cell.color !== null) return true
+    // If the cell itself has no color, it cannot be protected
+    const cell = this.cellAt(loc)
+    if (cell.type !== 'shell' || cell.color === null) return false
+    const connected = this.traverseConnectedShells(loc)
+    for (const [row, col] of connected) {
+      for (let r = 0; r < row; r++) {
+        const aboveCell = this.grid[r][col]
+        if (aboveCell.type === 'shell' && aboveCell.color !== null) {
+          return true
+        }
+      }
     }
     return false
   }
@@ -117,8 +122,13 @@ export class FortGrid {
   }
 
   attackAt(loc: [number, number], count: number): boolean {
-    const info = this.shellInfo.find(i => i.loc === loc)
-    if (info && (info.protectBonus || info.connectStrength > count)) {
+    const info = this.shellInfo.find(
+      i => i.loc[0] === loc[0] && i.loc[1] === loc[1],
+    )
+    if (!info) {
+      throw new Error(`No shell info found at (${loc}): ${this.shellInfoCache}`)
+    }
+    if (info.protectBonus || info.connectStrength > count) {
       return false
     }
     this.destroyAt(loc, true)

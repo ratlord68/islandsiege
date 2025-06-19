@@ -1,9 +1,10 @@
-import type { CubeReserve } from './Game'
+import type { ShellReserve } from './Game'
 import type { Fort } from './Fort'
 import type { Ship } from './Ship'
 import type { Building } from './Building'
 import type { Card } from './Card'
 import { DieValue } from './Die'
+import { ShellColor } from 'common/colors'
 
 export class Player {
   static MAX_COLONISTS = 9
@@ -17,7 +18,7 @@ export class Player {
   ships: Ship[] = []
 
   colonists: number = Player.MAX_COLONISTS
-  cubes: CubeReserve = { B: 0, G: 0, W: 0 }
+  shells: ShellReserve = { black: 0, gray: 0, white: 0 }
   attack_dice: number = 3
   rerolls: number = 1
 
@@ -30,11 +31,11 @@ export class Player {
     Object.assign(this, overrides)
 
     // Deep merge cube reserve
-    this.cubes = {
+    this.shells = {
       black: 0,
       gray: 0,
       white: 0,
-      ...(overrides.cubes || {}),
+      ...(overrides.shells || {}),
     }
   }
 
@@ -118,8 +119,9 @@ export class Player {
     this.buildings = this.buildings.filter(b => b.fort !== fort)
   }
 
-  updateCubes(color: string, count: number): void {
-    this.cubes[color] += count
+  updateShells(color: ShellColor, count: number): void {
+    const newCount = (this.shells[color] ?? 0) + count
+    this.shells[color] = Math.max(0, newCount)
   }
 
   totalColonists(): number {

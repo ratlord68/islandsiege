@@ -13,7 +13,7 @@ export const mockGameState = (
     winningPlayerIndex: undefined,
     pending: {},
     shipLocations: {},
-    cubeReserve: { black: 5, white: 5, gray: 5 },
+    shellReserve: { black: 5, white: 5, gray: 5 },
     attackIsOpenWater: false,
     attackRoll: ['B', 'B', 'B'],
     attackRerollsRemaining: 1,

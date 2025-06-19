@@ -1,4 +1,4 @@
-import { CubeColor } from 'common/colors'
+import { ShellColor } from 'common/colors'
 import { GameState } from './GameState'
 
 export type Game = {
@@ -6,4 +6,4 @@ export type Game = {
   state: GameState
 }
 
-export type CubeReserve = Record<CubeColor, number>
+export type ShellReserve = Partial<Record<ShellColor, number>>

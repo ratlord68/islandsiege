@@ -3,7 +3,7 @@ import { Deck } from './Deck'
 import { DieValue } from './Die'
 import { Phase } from '../common/phases'
 import type { rollCounts } from './AttackRoll'
-import { CubeReserve } from './Game'
+import { ShellReserve } from './Game'
 
 export type GameState = {
   players: Player[]
@@ -19,7 +19,7 @@ export type GameState = {
       fortID?: string
     }
   }
-  cubeReserve: CubeReserve
+  shellReserve: ShellReserve
   attackIsOpenWater: boolean
   attackRoll: DieValue[] | undefined
   attackRerollsRemaining: number

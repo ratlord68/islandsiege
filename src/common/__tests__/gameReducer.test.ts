@@ -138,7 +138,7 @@ describe('gameReducer', () => {
     // reset
     state.players[0].forts = []
 
-    state.players[0].cubes = { B: 2, G: 2, W: 2 }
+    state.players[0].shells = { B: 2, G: 2, W: 2 }
     payload.payload.fortGridSpec = [
       [0, 3, 'B'],
       [1, 3, 'G'],
@@ -149,8 +149,8 @@ describe('gameReducer', () => {
     fort = player.forts[0]
     expect(fort.id).toBe('spyOutpost')
     expect(fort.shellsRemaining).toEqual(4)
-    expect(player.cubes).toEqual({ B: 1, G: 1, W: 1 })
-    // fail if player does not have cubes
+    expect(player.shells).toEqual({ B: 1, G: 1, W: 1 })
+    // fail if player does not have shells
     state.players[0].forts = []
     payload.payload.fortGridSpec = [
       [0, 3, 'B'],
@@ -167,6 +167,9 @@ describe('gameReducer', () => {
   test.todo('buildBuilding - will build a building, move coloinsts, give coins')
 
   it('attackStart - will initiate attack', () => {
+    // ensure previous history is cleared
+    gs.shipLocations[0] = { targetPlayerIndex: 1, fortID: 'testFort' }
+
     let payload = {
       type: GamePhases.attackStart,
       payload: {
@@ -219,26 +222,38 @@ describe('gameReducer', () => {
 
   test.todo('attackLeadership - use Leadership abilities once implemented')
 
-  it('attackWave1 - all dice of one color used, optional grid destruction', () => {
+  it('attackWave1 - all dice of one color used, protection enabled', () => {
     // initialize roll values, fort to attack
     gs.attackValueCounts = { B: 1, W: 2, G: 1 }
-    let fort = new Fort(createMockFortCard())
+    let fort = new Fort(
+      createMockFortCard({
+        gridSpec: [
+          [0, 0, 'B'],
+          [1, 0, 'W'],
+          [1, 1, 'W'],
+          [1, 2, 'G'],
+        ],
+      }),
+    )
     gs.players[1].addFort(fort)
-    expect(fort.shellsRemaining).toBe(3)
+    expect(fort.shellsRemaining).toBe(4)
     // add attacking state information
     gs.shipLocations[0] = { targetPlayerIndex: 1, fortID: 'testFort' }
 
     let payload = {
       type: GamePhases.attackWave1,
-      payload: { attackColor: 'W', attackLoc: [2, 2] },
+      payload: { attackColor: 'G', attackLoc: [1, 2] },
     }
     let state = gameReducer(gs, payload)
-
     expect(state.phase).toBe('attackReinforceOrWave2')
-    expect(state.attackValueCounts).toEqual({ B: 1, G: 1 })
+    expect(state.attackValueCounts).toEqual({ B: 1, W: 2 })
     fort = state.players[1].findFort('testFort')
-    expect(fort.shellsRemaining).toBe(2)
-    expect(state.players[1].findFort('testFort').shellsRemaining).toBe(2)
+    expect(fort.shellsRemaining).toBe(3)
+    // now try to destroy a cell that is connected to a protected cell
+    payload.payload = { attackColor: 'W', attackLoc: [1, 1] }
+    state = gameReducer(gs, payload)
+    fort = state.players[1].findFort('testFort')
+    expect(fort.shellsRemaining).toBe(3) // attack should fail
   })
 
   it('attackReinforceOrWave2 - reinforce if no target', () => {
@@ -264,6 +279,80 @@ describe('gameReducer', () => {
     expect(state.phase).toBe('attackReinforce')
   })
 
-  test.todo('attackReinforce - add cubes to player reserve')
-  // gs.attackValueCounts = {'B': 1, 'W': 1, 'T': 1};
+  it('attackReinforce - add shells to player reserve', () => {
+    gs.attackValueCounts = { B: 1, W: 1, T: 1 }
+    let payload = { type: GamePhases.attackReinforce }
+    let state = gameReducer(gs, payload)
+    expect(state.phase).toBe('attackDestroy') // Fort may have been destroyed in first wave
+    expect(state.players[0].shells).toMatchObject({ black: 1, white: 1 })
+    expect(state.shellReserve).toMatchObject({ black: 4, white: 4 })
+
+    // but cannot take more than available
+    gs.shellReserve = { black: 1, white: 3, gray: 2 }
+    gs.attackValueCounts = { B: 2, T: 1 }
+    state = gameReducer(gs, payload)
+    expect(state.players[0].shells).toMatchObject({ black: 2 })
+    expect(state.shellReserve).toMatchObject({ black: 0 })
+  })
+
+  it('attackWave2 - destroy fort shells with no care for protection', () => {
+    gs.attackValueCounts = { T: 2, G: 1 }
+    let fort = new Fort(
+      createMockFortCard({
+        gridSpec: [
+          [0, 0, 'B'],
+          [1, 0, 'W'],
+          [1, 1, 'W'],
+          [1, 2, 'G'],
+        ],
+      }),
+    )
+    expect(fort.shellsRemaining).toBe(4)
+    gs.players[1].addFort(fort)
+    gs.shipLocations[0] = { targetPlayerIndex: 1, fortID: 'testFort' }
+    let payload = {
+      type: GamePhases.attackWave2,
+      payload: {
+        attackLocs: [
+          [1, 2],
+          [1, 0],
+        ],
+      },
+    }
+    let state = gameReducer(gs, payload)
+    expect(state.phase).toBe('attackDestroy')
+    fort = state.players[1].findFort('testFort')
+    expect(fort.shellsRemaining).toBe(2)
+  })
+
+  it('attackDestroy - destroy fort and buildings, return colonists', () => {
+    let fort = new Fort(createMockFortCard({ gridSpec: [[0, 0, 'B']] }))
+    expect(fort.shellsRemaining).toBe(1)
+    let targetPlayer = gs.players[1]
+    targetPlayer.addFort(fort)
+    targetPlayer.populateForts()
+    expect(targetPlayer.colonists).toBe(8)
+    gs.shipLocations[0] = { targetPlayerIndex: 1, fortID: 'testFort' }
+    let payload = { type: GamePhases.attackDestroy }
+    let state = gameReducer(gs, payload)
+    expect(state.phase).toBe('endTurn')
+    fort = state.players[1].findFort('testFort')
+    expect(fort).toBeDefined()
+    // now destroy the last shell
+    fort.grid.destroyAt([0, 0])
+    state = gameReducer(gs, payload)
+    expect(state.players[1].colonists).toBe(9)
+    expect(() => state.players[1].findFort('testFort')).toThrow()
+  })
+
+  it('endTurn - will set next player as active', () => {
+    expect(gs.currentPlayerIndex).toBe(0)
+    const payload = { type: GamePhases.endTurn }
+    let state = gameReducer(gs, payload)
+    expect(state.phase).toBe('victory')
+    expect(state.currentPlayerIndex).toBe(1)
+    // loops back to player 0
+    state = gameReducer(state, payload)
+    expect(state.currentPlayerIndex).toBe(0)
+  })
 })

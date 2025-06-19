@@ -6,6 +6,7 @@ import { Player } from '../game/Player'
 import { GamePhases, Phase } from './phases'
 import { rollDice, rollSingleDie, reduceDice } from '../game/AttackRoll'
 import { FortGridSpec } from 'game/FortGrid'
+import { colorToSymbol, symbolToColor } from './colors'
 
 export function gameReducer(
   state: GameState,
@@ -73,8 +74,6 @@ export function gameReducer(
       const drawn = state.deck.draw(cardsToDraw)
       // TODO: Add some logging
       player.addCardsToHand(drawn)
-      // not sure if this is required...
-      state.players[state.currentPlayerIndex] = player
       return {
         ...state,
         phase: 'discard',
@@ -177,9 +176,9 @@ export function gameReducer(
       // TODO: Verify player has adequate shells in supply
       for (const spec of fortGridSpec) {
         const color = spec[2]
-        if (player.cubes[color] > 0) {
+        if (player.shells[color] > 0) {
           grid.buildSpec([spec])
-          player.cubes[color]--
+          player.shells[color]--
           shellsBuilt++
         } else {
           throw new Error(
@@ -227,6 +226,8 @@ export function gameReducer(
 
     case GamePhases.attackStart: {
       const { targetPlayerIndex, fortID } = phase.payload
+      // clear previous attack locations
+      state.shipLocations[state.currentPlayerIndex] = {}
       const openWaterAttack = !state.players.some(p => p.forts.length >= 1)
       state.attackIsOpenWater = openWaterAttack
 
@@ -340,30 +341,47 @@ export function gameReducer(
 
     case GamePhases.attackReinforce: {
       const player = state.players[state.currentPlayerIndex]
-      const values = state.attackValueCounts
-      state.cubeReserve // cubes are a finitxe resource
-      const cubeColors = ['gray', 'black', 'white']
-      cubeColors.forEach(color => {
-        const toMove = Math.min(values[color], state.cubeReserve[color])
-        state.cubeReserve[color] -= toMove
-        player.updateCubes(toMove)
-        state.players[state.currentPlayerIndex] = player
-      })
+      const newShellReserve = { ...state.shellReserve }
+      const newShells = { ...player.shells }
+      const allowedSymbols = ['G', 'W', 'B']
 
+      Object.keys(state.attackValueCounts).forEach(symb => {
+        if (!allowedSymbols.includes(symb)) return
+        const color = symbolToColor(symb)
+        const count = state.attackValueCounts[symb]
+        const available = newShellReserve[color] ?? 0
+
+        if (count > 0 && available > 0) {
+          const toGive = Math.min(count, available)
+          newShells[color] = (newShells[color] ?? 0) + toGive
+          newShellReserve[color] = available - toGive
+        }
+      })
+      player.shells = newShells
       return {
         ...state,
-        phase: 'attackDestroy',
+        shellReserve: newShellReserve,
+        phase: GamePhases.attackDestroy,
       }
     }
 
     case GamePhases.attackWave2: {
-      const { gridLocs } = phase.payload
-      const numT = state.cubeReserve['T'] ?? 0
+      const { attackLocs } = phase.payload
+      const numT = state.attackValueCounts['T'] ?? 0
 
+      if (attackLocs.length !== numT) {
+        throw new Error(
+          `Invalid number of attack locations: expected ${numT}, got ${attackLocs.length}`,
+        )
+      }
       const player = state.players[state.currentPlayerIndex]
       const attackTargets = state.shipLocations[state.currentPlayerIndex]
       const targetPlayer = state.players[attackTargets.targetPlayerIndex!]
       const targetFort = targetPlayer.findFort(attackTargets.fortID!)
+      const grid = targetFort.grid
+      attackLocs.forEach((loc: [number, number]) => {
+        grid.destroyAt(loc)
+      })
 
       return {
         ...state,
@@ -393,7 +411,7 @@ export function gameReducer(
 
     case GamePhases.endTurn: {
       state.currentPlayerIndex =
-        state.currentPlayerIndex++ % state.players.length
+        (state.currentPlayerIndex + 1) % state.players.length
       return {
         ...state,
         phase: 'victory',
