@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import PlayerPanel from './PlayerPanel'
-import { Player } from '../lib/Player'
+import { Player } from '../game/Player'
 import GameSetup from './GameSetup'
-import { StartingFort } from '../lib/forts/StartingFort'
+import { StartingFort } from '../game/forts/StartingFort'
 
 const PLAYER_COLORS = ['#1e90ff', '#e67e22', '#27ae60', '#8e44ad']
 

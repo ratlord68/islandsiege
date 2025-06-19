@@ -1,5 +1,5 @@
 import React from 'react'
-import { Ship as ShipModel } from '../lib/Ship'
+import { Ship as ShipModel } from '../game/Ship'
 
 interface ShipProps {
   ship: ShipModel

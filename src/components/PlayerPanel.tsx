@@ -1,5 +1,5 @@
 import React from 'react'
-import { Player } from '../lib/Player'
+import { Player } from '../game/Player'
 import Fort from './Fort'
 import Building from './Building'
 import Ship from './Ship'
@@ -34,9 +34,9 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({
       <p>
         Cubes:
         <ul>
-          <li>Black: {player.cubes.black}</li>
-          <li>Gray: {player.cubes.gray}</li>
-          <li>White: {player.cubes.white}</li>
+          <li>Black: {player.shells.black}</li>
+          <li>Gray: {player.shells.gray}</li>
+          <li>White: {player.shells.white}</li>
         </ul>
       </p>
       <button onClick={onMoveColonist}>Move Colonist</button>
