@@ -54,7 +54,7 @@ export function gameReducer(
 
       if (Object.keys(pending).length < state.players.length) {
         // not all players have selected a discard
-        return { ...state, pending }
+        return { ...state, phase: 'initDiscard', pending }
       }
 
       Object.entries(pending).forEach(([idxStr, cardID]) => {
