@@ -1,5 +1,5 @@
 import React from 'react'
-import { Building as BuildingModel } from '../lib/Building'
+import { Building as BuildingModel } from '../game/Building'
 
 interface BuildingProps {
   building: BuildingModel

@@ -1,5 +1,4 @@
 import { Deck } from '../Deck'
-import { Card } from '../../types'
 
 describe('Deck', () => {
   let deck: Deck

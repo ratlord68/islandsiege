@@ -1,8 +1,8 @@
-import type { FortGridCell } from '../lib/FortGrid'
-import { CubeColors } from '../lib/colors'
+import type { FortGridCell } from '../game/FortGrid'
+import { ShellColors } from '../common/colors'
 
 function getCellLabel(cell: FortGridCell, row: number, col: number) {
-  if (cell.type === 'cube' && cell.color) return cell.color[0].toUpperCase()
+  if (cell.type === 'shell' && cell.color) return cell.color[0].toUpperCase()
   return ''
 }
 
@@ -23,11 +23,11 @@ export const FortGrid: React.FC<{
           row.map((cell, colIndex) => {
             let bgColor = '#99bed8'
             let border = '3px solid #925b24'
-            if (cell.type === 'cube') {
+            if (cell.type === 'shell') {
               if (view === 'hand') {
-                bgColor = cell.color ? CubeColors[cell.color] : '#f5f5f5'
+                bgColor = cell.color ? ShellColors[cell.color] : '#f5f5f5'
               } else if (view === 'tableau') {
-                bgColor = cell.color ? CubeColors[cell.color] : '#fff'
+                bgColor = cell.color ? ShellColors[cell.color] : '#fff'
               }
             } else {
               border = '3px solid #fff'

@@ -5,8 +5,8 @@ import { Ship } from '../game/Ship'
 import { Player } from '../game/Player'
 import { GamePhases, Phase } from './phases'
 import { rollDice, rollSingleDie, reduceDice } from '../game/AttackRoll'
-import { FortGridSpec } from 'game/FortGrid'
-import { colorToSymbol, symbolToColor } from './colors'
+import { symbolToColor } from './colors'
+import { DieValue } from 'game/Die'
 
 export function gameReducer(
   state: GameState,
@@ -55,7 +55,7 @@ export function gameReducer(
         const player = state.players[idx]
         const targetPlayer = state.players[nextIdx]
 
-        let discarded = player.removeCardInHand(cardID)
+        let discarded = player.removeCardInHand(cardID as string)
         targetPlayer.hand.push(discarded)
         player.drawCache = [] // reset for UI
         state.players[idx] = player
@@ -84,7 +84,7 @@ export function gameReducer(
       const { targetPlayerIndex, cardID } = phase.payload
 
       const player = state.players[state.currentPlayerIndex]
-      const removedCard = player.removeCardInHand(cardID)
+      const removedCard = player.removeCardInHand(cardID as string)
       player.drawCache = []
       // TODO: Handle case where card is not given
       const target = state.players[targetPlayerIndex]
@@ -175,8 +175,12 @@ export function gameReducer(
       // grid.buildSpec(fortGridSpec);
       // TODO: Verify player has adequate shells in supply
       for (const spec of fortGridSpec) {
-        const color = spec[2]
-        if (player.shells[color] > 0) {
+        const color = symbolToColor(spec[2]) as 'black' | 'white' | 'gray'
+        if (
+          color &&
+          typeof player.shells[color] !== 'undefined' &&
+          player.shells[color] > 0
+        ) {
           grid.buildSpec([spec])
           player.shells[color]--
           shellsBuilt++
@@ -312,12 +316,11 @@ export function gameReducer(
       const attackTargets = state.shipLocations[state.currentPlayerIndex]
       const targetPlayer = state.players[attackTargets.targetPlayerIndex!]
       let targetFort = targetPlayer.findFort(attackTargets.fortID!)
-      const diceStrength = state.attackValueCounts[attackColor]
-      delete state.attackValueCounts[attackColor] // remove from next rolls
+      const colorKey = attackColor as DieValue
+      const diceStrength = state.attackValueCounts[colorKey] ?? 0
+      delete state.attackValueCounts[colorKey]
       const grid = targetFort.grid
       grid.attackAt(attackLoc, diceStrength)
-      // TODO: Ensure change is preserved
-
       return {
         ...state,
         phase: 'attackReinforceOrWave2',
@@ -348,7 +351,7 @@ export function gameReducer(
       Object.keys(state.attackValueCounts).forEach(symb => {
         if (!allowedSymbols.includes(symb)) return
         const color = symbolToColor(symb)
-        const count = state.attackValueCounts[symb]
+        const count = state.attackValueCounts[symb as DieValue] ?? 0
         const available = newShellReserve[color] ?? 0
 
         if (count > 0 && available > 0) {

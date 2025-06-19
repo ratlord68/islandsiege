@@ -1,5 +1,5 @@
 import React from 'react'
-import { Fort as FortModel } from '../lib/Fort'
+import { Fort as FortModel } from '../game/Fort'
 import FortGrid from './FortGrid'
 
 interface FortProps {

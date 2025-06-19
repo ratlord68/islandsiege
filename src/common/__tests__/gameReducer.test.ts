@@ -138,7 +138,7 @@ describe('gameReducer', () => {
     // reset
     state.players[0].forts = []
 
-    state.players[0].shells = { B: 2, G: 2, W: 2 }
+    state.players[0].shells = { black: 2, gray: 2, white: 2 }
     payload.payload.fortGridSpec = [
       [0, 3, 'B'],
       [1, 3, 'G'],
@@ -149,7 +149,7 @@ describe('gameReducer', () => {
     fort = player.forts[0]
     expect(fort.id).toBe('spyOutpost')
     expect(fort.shellsRemaining).toEqual(4)
-    expect(player.shells).toEqual({ B: 1, G: 1, W: 1 })
+    expect(player.shells).toEqual({ black: 1, gray: 1, white: 1 })
     // fail if player does not have shells
     state.players[0].forts = []
     payload.payload.fortGridSpec = [
@@ -158,7 +158,7 @@ describe('gameReducer', () => {
       [2, 0, 'B'],
     ]
     expect(() => gameReducer(gs, payload)).toThrow(
-      'Player does not have enough B',
+      'Player does not have enough black',
     )
   })
 

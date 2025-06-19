@@ -1,4 +1,4 @@
-import type { CubeColor } from '../lib/colors'
+import type { ShellColor } from '../common/colors'
 import type { FortGridSpec } from './FortGrid'
 
 export type CardType = 'building' | 'fort' | 'ship'
@@ -18,7 +18,7 @@ export interface FortCard extends Card {
 export interface BuildingCard extends Card {
   cost: number // colonists required on fort
   coins: number // coins awarded when played
-  repairColor: CubeColor // cube color to use for repair when played - AFAIK, always singular.
+  repairColor: ShellColor // shell color to use for repair when played - AFAIK, always singular.
 }
 
 export interface ShipCard extends Card {

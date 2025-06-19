@@ -1,4 +1,4 @@
-import type { CubeColor } from '../../common/colors'
+import type { ShellColor } from '../../common/colors'
 import type { BuildingCard } from '../Card'
 
 export const createMockBuildingCard = (
@@ -11,7 +11,7 @@ export const createMockBuildingCard = (
     description: 'Testing',
     cost: 2,
     coins: 3,
-    repairColor: 'black' as CubeColor,
+    repairColor: 'black' as ShellColor,
     ...overrides,
   }
 }
