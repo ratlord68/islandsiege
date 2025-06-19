@@ -21,20 +21,25 @@ describe('gameReducer', () => {
     jest.restoreAllMocks()
   })
 
-  it('initDraw - will initialize the game', () => {
+  it('initGame - will initialize the game state and draw', () => {
     const payload = {
       type: GamePhases.initGame,
-      payload: { playerNames: ['Jack', 'Sparrow'] },
+      payload: { playerNames: ['Cpt', 'Arg', 'Matey'] },
     }
     const state = gameReducer(gs, payload)
-    expect(state.players.length).toBe(2)
-    expect(state.players[0].name).toBe('Jack')
-    expect(state.players[1].name).toBe('Sparrow')
-    expect(state.phase).toBe('initDraw')
+    expect(state.players.length).toBe(3)
+    expect(state.players[0].name).toBe('Cpt')
+    expect(state.players[1].name).toBe('Arg')
+    expect(state.players[2].name).toBe('Matey')
+    expect(state.phase).toBe('initDiscard')
+    expect(state.deck.remaining).toBe(27) // 3 per player
+    expect(state.players.every(player => player.forts.length === 1))
+    expect(state.players.every(player => player.shells.black === 1))
+    expect(state.players.every(player => player.shells.white === 1))
   })
 
   it('initDiscard - will handle initial draw phase', () => {
-    const payload = { type: GamePhases.initDraw }
+    const payload = { type: GamePhases.initDiscard }
     let state = gameReducer(gs, payload)
     expect(state.players.every(player => player.hand.length === 3))
     expect(state.phase).toBe('initDiscard')

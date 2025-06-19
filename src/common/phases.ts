@@ -19,7 +19,6 @@
 export type Phase =
   | 'initGame'
   | 'resetGame'
-  | 'initDraw'
   | 'initDiscard'
   | 'victory'
   | 'colonize'
@@ -44,7 +43,6 @@ export const GamePhases = {
   // Game Setup
   initGame: 'initGame',
   resetGame: 'resetGame',
-  initDraw: 'initDraw',
   initDiscard: 'initDiscard',
   // Automatic Phases
   victory: 'victory',
@@ -74,10 +72,6 @@ export type Action = (typeof GamePhases)[keyof typeof GamePhases]
 export const initGame = (playerNames: string[]) => ({
   type: GamePhases.initGame,
   payload: { playerNames },
-})
-
-export const initDraw = () => ({
-  type: GamePhases.initDraw,
 })
 
 export const initDiscard = (targetPlayerIndex: number, cardID: string) => ({
