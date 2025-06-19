@@ -35,9 +35,9 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({
       <p>Coins: {player.coins}</p>
       <p>Shells:</p>
       <ul>
-        <li>Black: ...</li>
-        <li>Gray: ...</li>
-        <li>White: ...</li>
+        <li>Black: {player.shells.black}</li>
+        <li>Gray: {player.shells.gray}</li>
+        <li>White: {player.shells.white}</li>
       </ul>
       <div style={{ marginTop: 16 }}>
         <h3>Hand ({player.hand.length})</h3>

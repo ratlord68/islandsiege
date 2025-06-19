@@ -20,9 +20,12 @@ const GameBoard: React.FC<GameBoardProps> = ({ state, dispatch }) => {
     dispatch({ type: 'initDiscard', payload: { playerIdx, cardID } })
   }
 
+  const activePlayer = state.players[state.currentPlayerIndex]
+  const activePlayerName = activePlayer?.name
   return (
     <div style={{ padding: 20, position: 'relative' }}>
       <h1>Current Phase: {state.phase}</h1>
+      <h2>Active Player: {activePlayerName}</h2>
       <div style={{ display: 'flex', gap: 40 }}>
         {players.map((player, idx) => {
           const isPending =

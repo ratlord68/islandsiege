@@ -57,6 +57,11 @@ export function gameReducer(
         // not all players have selected a discard
         return { ...state, phase: 'initDiscard', pending }
       }
+      return { ...state, phase: 'initDistribute', pending }
+    }
+
+    case GamePhases.initDistribute: {
+      const pending = { ...state.pending }
 
       Object.entries(pending).forEach(([idxStr, cardID]) => {
         const idx = parseInt(idxStr, 10)

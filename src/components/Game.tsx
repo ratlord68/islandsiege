@@ -6,6 +6,7 @@ import { Deck, Discard } from './Deck'
 import { createInitialGameState } from '../game/GameState'
 import ColorPicker from './ColorPicker'
 import { PLAYER_COLORS } from 'common/colors'
+import ActionSelector from './ActionSelector'
 
 const Game: React.FC = () => {
   const [state, dispatch] = useReducer(gameReducer, createInitialGameState())
@@ -74,9 +75,8 @@ const Game: React.FC = () => {
   if (state.phase === GamePhases.initDistribute) {
     return (
       <div>
-        <h2>Cards have been distributed!</h2>
+        <ActionSelector onSelect={phase => dispatch({ type: phase })} />
         <GameBoard state={state} dispatch={dispatch} />
-        <button onClick={() => dispatch({ type: 'action' })}>Continue</button>
       </div>
     )
   }
