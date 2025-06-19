@@ -179,10 +179,10 @@ export function gameReducer(
         if (
           color &&
           typeof player.shells[color] !== 'undefined' &&
-          player.shells[color] > 0
+          (player.shells[color] ?? 0) > 0
         ) {
           grid.buildSpec([spec])
-          player.shells[color]--
+          player.shells[color] = Math.max(0, (player.shells[color] ?? 0) - 1)
           shellsBuilt++
         } else {
           throw new Error(
