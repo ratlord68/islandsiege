@@ -21,28 +21,49 @@ describe('gameReducer', () => {
     jest.restoreAllMocks()
   })
 
-  it('initDraw - will initialize the game', () => {
+  it('initGame - will initialize the game state and draw', () => {
     const payload = {
       type: GamePhases.initGame,
-      payload: { playerNames: ['Jack', 'Sparrow'] },
+      payload: { playerNames: ['Cpt', 'Arg', 'Matey'] },
     }
     const state = gameReducer(gs, payload)
-    expect(state.players.length).toBe(2)
-    expect(state.players[0].name).toBe('Jack')
-    expect(state.players[1].name).toBe('Sparrow')
-    expect(state.phase).toBe('initDraw')
+    expect(state.players.length).toBe(3)
+    expect(state.players[0].name).toBe('Cpt')
+    expect(state.players[1].name).toBe('Arg')
+    expect(state.players[2].name).toBe('Matey')
+    expect(state.phase).toBe('initDiscard')
+    expect(state.deck.remaining).toBe(27) // 3 per player
+    expect(state.players.every(player => player.forts.length === 1))
+    expect(state.players.every(player => player.shells.black === 1))
+    expect(state.players.every(player => player.shells.white === 1))
   })
 
   it('initDiscard - will handle initial draw phase', () => {
-    const payload = { type: GamePhases.initDraw }
+    let payload = {
+      type: GamePhases.initDiscard,
+      payload: { playerIdx: 0, cardID: 'a' },
+    }
+    gs.players[0].hand = [
+      { name: 'A', id: 'a', type: 'fort' as CardType, description: 'test' },
+    ]
     let state = gameReducer(gs, payload)
-    expect(state.players.every(player => player.hand.length === 3))
+    // Do not swap until all players submit
+    expect(state.players[0].hand[0].id).toBe('a')
     expect(state.phase).toBe('initDiscard')
+    expect(state.pending).toMatchObject({ 0: 'a' })
+    state.players[1].hand = [
+      { name: 'B', id: 'b', type: 'ship' as CardType, description: 'test' },
+    ]
+    payload.payload = { playerIdx: 1, cardID: 'b' }
+    state = gameReducer(state, payload)
+    // Now swap has occured
+    expect(state.players[0].hand[0].id).toBe('b')
+    expect(state.players[1].hand[0].id).toBe('a')
+    expect(state.phase).toBe('action')
   })
 
   it('draw - will handle individual draw', () => {
     const payload = { type: GamePhases.draw }
-
     let state = gameReducer(gs, payload)
     expect(state.players[0].hand).toHaveLength(3)
     expect(state.players[1].hand).toHaveLength(0)

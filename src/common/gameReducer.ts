@@ -3,6 +3,7 @@ import { FortRegistry } from 'game/forts'
 import { Building } from '../game/Building'
 import { Ship } from '../game/Ship'
 import { Player } from '../game/Player'
+import { Deck } from '../game/Deck'
 import { GamePhases, Phase } from './phases'
 import { rollDice, rollSingleDie, reduceDice } from '../game/AttackRoll'
 import { symbolToColor } from './colors'
@@ -14,31 +15,38 @@ export function gameReducer(
 ): GameState {
   switch (phase.type) {
     case GamePhases.initGame:
-      return {
-        ...state,
-        players: phase.payload.playerNames.map(
-          (name: string, idx: number) => new Player(name, idx + 1),
-        ),
-        phase: 'initDraw',
+      const { playerNames } = phase.payload
+      // Create players from player names
+      if (!playerNames || playerNames.length < 2) {
+        throw new Error('At least two players are required to start the game.')
       }
+      state.players = playerNames.map(
+        (name: string, idx: number) => new Player(name, idx + 1),
+      )
+      state.shellReserve = { black: 5, white: 5, gray: 5 }
+      // TODO: Seed randomness
+      state.deck = new Deck()
+      state.currentPlayerIndex = Math.floor(
+        Math.random() * state.players.length,
+      )
 
-    case GamePhases.initDraw: {
+      const startingFort = FortRegistry['startingFort']
+      state.players.forEach(player => {
+        const fort = new startingFort()
+        player.addFort(fort)
+        const startingShells = { black: 1, white: 1 }
+        player.shells = { ...player.shells, ...startingShells }
+      })
+
       const cardsToDraw = 3
-      const deck = state.deck
-      const players = state.players
-
-      players.forEach(player => {
-        const drawn = deck.draw(cardsToDraw)
+      state.players.forEach(player => {
+        const drawn = state.deck.draw(cardsToDraw)
         player.addCardsToHand(drawn)
       })
-      state.players = players
-      state.deck = deck
-
       return {
         ...state,
         phase: 'initDiscard',
       }
-    }
 
     case GamePhases.initDiscard: {
       const { playerIdx, cardID } = phase.payload
@@ -46,7 +54,7 @@ export function gameReducer(
 
       if (Object.keys(pending).length < state.players.length) {
         // not all players have selected a discard
-        return { ...state, pending }
+        return { ...state, phase: 'initDiscard', pending }
       }
 
       Object.entries(pending).forEach(([idxStr, cardID]) => {
