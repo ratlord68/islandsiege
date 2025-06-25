@@ -1,8 +1,7 @@
-import GameBoard from 'components/GameBoard'
-// import React from 'react'
+import Game from 'components/Game'
 
 const App = () => {
-  return <GameBoard />
+  return <Game />
 }
 
 export default App

@@ -20,6 +20,7 @@ export type Phase =
   | 'initGame'
   | 'resetGame'
   | 'initDiscard'
+  | 'initDistribute'
   | 'victory'
   | 'colonize'
   | 'action'
@@ -44,6 +45,7 @@ export const GamePhases = {
   initGame: 'initGame',
   resetGame: 'resetGame',
   initDiscard: 'initDiscard',
+  initDistribute: 'initDistribute',
   // Automatic Phases
   victory: 'victory',
   colonize: 'colonize',

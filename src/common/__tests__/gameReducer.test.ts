@@ -24,7 +24,10 @@ describe('gameReducer', () => {
   it('initGame - will initialize the game state and draw', () => {
     const payload = {
       type: GamePhases.initGame,
-      payload: { playerNames: ['Cpt', 'Arg', 'Matey'] },
+      payload: {
+        playerNames: ['Cpt', 'Arg', 'Matey'],
+        playerColors: ['#fff', '#000', '#f00'],
+      },
     }
     const state = gameReducer(gs, payload)
     expect(state.players.length).toBe(3)
@@ -56,7 +59,21 @@ describe('gameReducer', () => {
     ]
     payload.payload = { playerIdx: 1, cardID: 'b' }
     state = gameReducer(state, payload)
-    // Now swap has occured
+    // Now we transition to distribution
+    expect(state.pending).toMatchObject({ 0: 'a', 1: 'b' })
+    expect(state.phase).toBe('initDistribute')
+  })
+
+  it('initDistibute - will handle card distribution', () => {
+    gs.players[0].hand = [
+      { name: 'A', id: 'a', type: 'fort' as CardType, description: 'test' },
+    ]
+    gs.players[1].hand = [
+      { name: 'B', id: 'b', type: 'ship' as CardType, description: 'test' },
+    ]
+    gs.pending = { 0: 'a', 1: 'b' }
+    const payload = { type: GamePhases.initDistribute }
+    const state = gameReducer(gs, payload)
     expect(state.players[0].hand[0].id).toBe('b')
     expect(state.players[1].hand[0].id).toBe('a')
     expect(state.phase).toBe('action')

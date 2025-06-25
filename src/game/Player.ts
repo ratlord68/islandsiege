@@ -10,6 +10,7 @@ export class Player {
   static MAX_COLONISTS = 9
   readonly id: string
   readonly name: string
+  color?: string
 
   coins: number = 0
   hand: Card[] = []
@@ -28,6 +29,7 @@ export class Player {
   constructor(name: string, idx: number, overrides: Partial<Player> = {}) {
     this.id = `p${idx}`
     this.name = name
+    this.color = overrides.color
     Object.assign(this, overrides)
 
     // Deep merge cube reserve
@@ -47,7 +49,7 @@ export class Player {
   removeCardInHand(cardID: string): Card {
     const cardIdx = this.hand.findIndex((c: Card) => c.id === cardID)
     if (cardIdx === -1) {
-      throw new Error(`Card ${cardID} not in hand`)
+      throw new Error(`${this.id}: Card ${cardID} not in hand`)
     }
     const [card] = this.hand.splice(cardIdx, 1)
     return card

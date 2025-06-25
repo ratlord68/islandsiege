@@ -24,28 +24,27 @@ describe('Deck', () => {
 
   it('adds cards to discard pile', () => {
     const hand = deck.draw(2)
-    deck.discard(hand)
-    const discards = deck.getDiscardPile()
-    expect(discards).toEqual(expect.arrayContaining(hand))
+    deck.discardCards(hand)
+    expect(deck.discard).toEqual(expect.arrayContaining(hand))
   })
 
   it('reshuffles discard pile into draw pile', () => {
     const hand = deck.draw(4)
-    deck.discard(hand)
+    deck.discardCards(hand)
 
-    expect(deck.getDiscardPile()).toHaveLength(4)
+    expect(deck.discard).toHaveLength(4)
     const drawBefore = deck.remaining
 
     deck.reshuffleDiscards()
 
-    expect(deck.getDiscardPile()).toHaveLength(0)
+    expect(deck.discard).toHaveLength(0)
     expect(deck.remaining).toBe(drawBefore + 4)
   })
 
   it('automatically reshuffles when not enough to draw', () => {
     expect(deck.shuffles).toBe(1)
     const hand = deck.draw(30)
-    deck.discard(hand)
+    deck.discardCards(hand)
     deck.draw(7)
     expect(deck.remaining).toBe(29)
     expect(deck.shuffles).toBe(2)
@@ -60,7 +59,7 @@ describe('Deck', () => {
     let card = deck.extract('victory')
     expect(card).toHaveProperty('name', 'Victory')
     // once extract is called, the card is removed
-    deck.discard([card])
+    deck.discardCards([card])
     expect(deck.includes('victory')).toBe(false)
     expect(deck.includes('victory', true)).toBe(true)
 

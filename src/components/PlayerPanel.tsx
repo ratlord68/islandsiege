@@ -3,68 +3,74 @@ import { Player } from '../game/Player'
 import Fort from './Fort'
 import Building from './Building'
 import Ship from './Ship'
+import Hand from './Hand'
 
 interface PlayerPanelProps {
   player: Player
-  onMoveColonist: () => void
-  onDestroyFort: (fortIndex: number) => void
   color?: string
+  active?: boolean
+  onCardSelect?: (cardID: string) => void
+  selectedCardID?: string
 }
 
 const PlayerPanel: React.FC<PlayerPanelProps> = ({
   player,
-  onMoveColonist,
-  onDestroyFort,
   color,
+  active,
+  onCardSelect,
+  selectedCardID,
 }) => {
   return (
     <div
       style={{
-        border: '1px solid #ccc',
+        border: active ? '3px solid #222' : '1px solid #ccc',
         borderRadius: 8,
         padding: 16,
         minWidth: 320,
+        boxShadow: active ? '0 0 10px #222' : undefined,
       }}>
       <h2 style={{ color }}>{player.name}</h2>
       <p>ID: {player.id}</p>
       <p>Colonists: {player.colonists}</p>
       <p>Coins: {player.coins}</p>
-      <p>Attack Dice: {player.attack_dice}</p>
-      <p>Rerolls: {player.rerolls}</p>
-      <p>
-        Cubes:
-        <ul>
-          <li>Black: {player.shells.black}</li>
-          <li>Gray: {player.shells.gray}</li>
-          <li>White: {player.shells.white}</li>
-        </ul>
-      </p>
-      <button onClick={onMoveColonist}>Move Colonist</button>
+      <p>Shells:</p>
+      <ul>
+        <li>Black: {player.shells.black}</li>
+        <li>Gray: {player.shells.gray}</li>
+        <li>White: {player.shells.white}</li>
+      </ul>
       <div style={{ marginTop: 16 }}>
+        <h3>Hand ({player.hand.length})</h3>
+        <Hand
+          cards={player.hand ?? []}
+          onCardSelect={onCardSelect}
+          selectedCardID={selectedCardID}
+        />
         <h3>Forts</h3>
-        {player.forts.length === 0 ? (
+        {player.forts?.length === 0 ? (
           <p>None</p>
         ) : (
-          player.forts.map((fort, i) => (
-            <div key={fort.id}>
+          player.forts?.map((fort, i) => (
+            <div key={fort.id ?? i}>
               <Fort fort={fort} />
-              <button onClick={() => onDestroyFort(i)}>Destroy Fort</button>
             </div>
           ))
         )}
         <h3>Buildings</h3>
-        {player.buildings.length === 0 ? (
+        {player.buildings?.length === 0 ? (
           <p>None</p>
         ) : (
-          player.buildings.map(building => (
-            <Building key={building.id} building={building} />
+          player.buildings?.map((building, i) => (
+            <Building key={building.id ?? i} building={building} />
           ))
         )}
         <h3>Ships</h3>
-        {player.ships.length === 0 ? (
+        {player.ships?.length === 0 ? (
           <p>None</p>
         ) : (
-          player.ships.map(ship => <Ship key={ship.id} ship={ship} />)
+          player.ships?.map((ship, i) => (
+            <Ship key={ship.id ?? i} ship={ship} />
+          ))
         )}
       </div>
     </div>
