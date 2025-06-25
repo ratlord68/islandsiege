@@ -37,6 +37,7 @@ const Game: React.FC = () => {
               marginBottom: 16,
             }}>
             <input
+              name={`player${idx + 1}`}
               type="text"
               placeholder={`Player ${idx + 1} Name`}
               value={playerNames[idx]}
@@ -72,7 +73,7 @@ const Game: React.FC = () => {
     )
   }
 
-  if (state.phase === GamePhases.initDistribute) {
+  if (state.phase === GamePhases.action) {
     return (
       <div>
         <ActionSelector onSelect={phase => dispatch({ type: phase })} />
