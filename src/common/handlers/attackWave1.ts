@@ -5,7 +5,6 @@ export function handleAttackWave1(
   state: GameState,
   payload: { attackColor: DieValue; attackLoc: [number, number] },
 ): GameState {
-  const player = state.players[state.currentPlayerIndex]
   const { targetPlayerIndex, fortID } =
     state.shipLocations[state.currentPlayerIndex]!
   const target = state.players[targetPlayerIndex!]

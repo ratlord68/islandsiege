@@ -13,7 +13,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ state, dispatch }) => {
   const players = state.players
   const activeIdx = state.currentPlayerIndex
   const isSimultaneousPhase = SIMULTANEOUS_PHASES.has(state.phase)
-  const [selectedCardIDs, setSelectedCardIDs] = React.useState<{
+  const [selectedCardIDs, setSelectedCardIDs] = useState<{
     [playerIdx: number]: string | undefined
   }>({})
 
